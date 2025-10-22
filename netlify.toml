@@ -1,0 +1,7 @@
+[build]
+  # No 'base' directory needed as the frontend is now the root of the repo
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  VITE_API_URL = "https://rto-reminder-backend.onrender.com"
