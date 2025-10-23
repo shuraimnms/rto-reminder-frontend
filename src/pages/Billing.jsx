@@ -4,7 +4,7 @@ import { billingAPI, settingsAPI } from '../services/api';
 
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
-import { initializeCashfree, createCashfreeCheckout } from '../utils/cashfree';
+
 
 const Billing = () => {
   const [walletBalance, setWalletBalance] = useState(0);
@@ -174,46 +174,13 @@ const Billing = () => {
         const rzp = new window.Razorpay(options);
         rzp.open();
       } else if (selectedGateway === 'cashfree') {
-        const { order } = response.data.data;
+        const { order, base_amount, transaction_fee, gst_amount } = response.data.data;
 
-        try {
-          const cashfree = await initializeCashfree();
-
-          const checkoutOptions = {
-            paymentSessionId: order.payment_session_id, // This should now be correct
-            redirectTarget: "_modal",
-          };
-
-          cashfree.checkout(checkoutOptions).then(async (result) => {
-            if (result.error) {
-              toast.error(result.error.message || 'Payment failed or was cancelled.');
-              return;
-            }
-            if (result.paymentDetails) {
-              try {
-                const verificationData = {
-                  gateway: 'cashfree',
-                  cashfree_order_id: result.paymentDetails.orderId,
-                  cashfree_payment_id: result.paymentDetails.paymentId,
-                  base_amount: topUpDetails.baseAmount,
-                  transaction_fee: topUpDetails.transactionFee,
-                  gst_amount: topUpDetails.gstAmount,
-                };
-                const verifyResponse = await billingAPI.verifyTopupPayment(verificationData);
-                toast.success(verifyResponse.data.message || 'Payment successful!');
-                setShowTopUpModal(false);
-                fetchWalletBalance();
-                fetchTransactions();
-              } catch (verifyError) {
-                toast.error(verifyError.response?.data?.message || 'Payment verification failed.');
-              }
-            }
-          });
-        } catch (cashfreeError) {
-          console.error('Cashfree initialization error:', cashfreeError);
-          toast.error('Failed to initialize payment gateway. Please try again.');
-        }
+        // Redirect to Cashfree payment page
+        window.location.href = order.payment_link;
+        return;
       }
+
     } catch (error) {
       console.log('Topup error:', error);
       const errorMessage = error.response?.data?.message || 'Failed to top up wallet';
