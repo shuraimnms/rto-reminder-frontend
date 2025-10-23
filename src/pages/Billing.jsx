@@ -180,7 +180,7 @@ const Billing = () => {
           const cashfree = await initializeCashfree();
 
           const checkoutOptions = {
-            paymentSessionId: order.payment_session_id,
+            paymentSessionId: order.payment_session_id, // This should now be correct
             redirectTarget: "_modal",
           };
 
