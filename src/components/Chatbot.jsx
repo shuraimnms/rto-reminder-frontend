@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Send, Bot, User, X, MessageCircle } from 'lucide-react';
 import { chatbotAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -31,8 +32,10 @@ How can I help you today?`,
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentFollowUp, setCurrentFollowUp] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,17 +68,28 @@ How can I help you today?`,
     setIsLoading(true);
 
     try {
-      const response = await chatbotAPI.sendQuery(userMessage.content);
+      const response = await chatbotAPI.sendQuery(userMessage.content, currentFollowUp);
+
+      // Handle navigation actions from the bot
+      if (response.type === 'navigation' && response.data?.path) {
+        navigate(response.data.path);
+        setIsOpen(false); // Close chatbot on navigation
+      }
 
       const botMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: response.data.response,
+        content: response.response,
         timestamp: new Date(),
-        data: response.data.data
+        data: response.data,
+        followUpAction: response.followUpAction
       };
 
       setMessages(prev => [...prev, botMessage]);
+
+      // Set the follow-up context for the next message
+      setCurrentFollowUp(response.followUpAction || null);
+
     } catch (error) {
       console.error('Chatbot error:', error);
       toast.error('Failed to get response from chatbot');
@@ -88,6 +102,7 @@ How can I help you today?`,
       };
 
       setMessages(prev => [...prev, errorMessage]);
+      setCurrentFollowUp(null); // Reset follow-up on error
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +140,7 @@ How can I help you today?`,
         {isOpen ? (
           <X className="h-6 w-6 text-white" />
         ) : (
-          <MessageCircle className="h-6 w-6 text-white" />
+          <Bot className="h-6 w-6 text-white" />
         )}
       </button>
 
