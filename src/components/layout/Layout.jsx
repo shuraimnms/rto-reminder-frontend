@@ -5,6 +5,8 @@ import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../ThemeSelector';
 import NotificationBell from '../NotificationBell';
 import Chatbot from '../Chatbot';
+import { format } from 'date-fns';
+
 import { notificationAPI } from '../../services/api';
 import {
   Home,
@@ -40,7 +42,7 @@ const Layout = ({ children }) => {
           id: notification._id,
           title: notification.title,
           message: notification.message,
-          timestamp: new Date(notification.createdAt).toLocaleString(),
+          timestamp: format(new Date(notification.createdAt), 'PPpp'), // Consistent date formatting
           read: notification.isRead,
           type: notification.type || 'info'
         }));
@@ -101,7 +103,7 @@ const Layout = ({ children }) => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Customers', href: '/customers', icon: Users },
     { name: 'Reminders', href: '/reminders', icon: Bell },
-    { name: 'Messages', href: '/messages', icon: MessageSquare },
+
     { name: 'Billing', href: '/billing', icon: CreditCard },
     { name: 'Guidance', href: '/guidance', icon: BookOpen },
     { name: 'Support', href: '/support', icon: Mail },
@@ -253,8 +255,8 @@ const Layout = ({ children }) => {
         />
       )}
 
-      {/* Chatbot */}
       <Chatbot />
+
     </div>
   );
 };

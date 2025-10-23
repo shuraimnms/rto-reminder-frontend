@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Search, RefreshCw, Download, Eye, Trash2, CheckCircle, XCircle, Clock, AlertCircle, BarChart3, TrendingUp, Users, Send } from 'lucide-react';
 import { messagesAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -79,6 +79,8 @@ const Messages = () => {
       toast.error(errorMessage);
     }
   };
+
+
 
   const handleExportCSV = async () => {
     try {
@@ -266,14 +268,6 @@ const Messages = () => {
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading messages...</p>
-          </div>
-        ) : (messages || []).length === 0 ? (
-          <div className="p-8 text-center">
-            <MessageSquare className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No messages found</h3>
-            <p className="mt-2 text-gray-600">
-              {searchTerm || filter !== 'all' ? 'Try adjusting your search or filter criteria.' : 'Messages will appear here once reminders are sent.'}
-            </p>
           </div>
         ) : (
           <>

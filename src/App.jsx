@@ -28,7 +28,7 @@ import AdminSupport from './pages/AdminSupport';
 import FraudAlerts from './pages/FraudAlerts';
 import Customers from './pages/Customers';
 import Reminders from './pages/Reminders';
-import Messages from './pages/Messages';
+
 import Billing from './pages/Billing';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Settings from './pages/Settings';
@@ -147,7 +147,7 @@ function App() {
             <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
               <Route path="/customers" element={<Customers />} />
               <Route path="/reminders" element={<Reminders />} />
-              <Route path="/messages" element={<Messages />} />
+
               <Route path="/billing" element={<Billing />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/guidance" element={<Guidance />} />

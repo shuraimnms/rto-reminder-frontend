@@ -7,7 +7,7 @@ const authenticatedFetch = async (endpoint, options = {}) => {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  // Don't add token for login and register endpoints, but add for assistant query if available
+  // Don't add token for login and register endpoints
   if (token && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -52,7 +52,7 @@ export const authAPI = {
 // Customers API
 export const customersAPI = {
   getAll: (params) => authenticatedFetch(`/api/v1/customers?${new URLSearchParams(params).toString()}`),
-  getById: (id) => authenticatedFetch(`/api/v1/customers/${id}`),
+   getById: (id) => authenticatedFetch(`/api/v1/customers/${id}`),
   create: (data) => authenticatedFetch('/api/v1/customers', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => authenticatedFetch(`/api/v1/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => authenticatedFetch(`/api/v1/customers/${id}`, { method: 'DELETE' }),
@@ -76,15 +76,7 @@ export const remindersAPI = {
   getReminderMessages: (id, params) => authenticatedFetch(`/api/v1/reminders/${id}/messages?${new URLSearchParams(params).toString()}`),
 };
 
-// Messages API
-export const messagesAPI = {
-  getAll: (params) => authenticatedFetch(`/api/v1/messages?${new URLSearchParams(params).toString()}`),
-  getById: (id) => authenticatedFetch(`/api/v1/messages/${id}`),
-  retry: (id) => authenticatedFetch(`/api/v1/messages/${id}/retry`, { method: 'POST' }),
-  delete: (id) => authenticatedFetch(`/api/v1/messages/${id}`, { method: 'DELETE' }),
-  getAnalytics: () => authenticatedFetch('/api/v1/messages/stats/analytics'),
-  exportCSV: (params) => authenticatedFetch(`/api/v1/messages/export/csv?${new URLSearchParams(params).toString()}`, { method: 'GET' }),
-};
+
 
 // Billing API
 export const billingAPI = {
@@ -163,11 +155,6 @@ export const adminAPI = {
   exportRevenue: () => authenticatedFetch('/api/v1/admin/export/revenue'),
 };
 
-// Assistant API
-export const assistantAPI = {
-  query: (data) => authenticatedFetch('/api/v1/assistant/query', { method: 'POST', body: JSON.stringify(data) }),
-};
-
 // Support API (for Agents)
 export const supportAPI = {
   createTicket: (data) => authenticatedFetch('/api/v1/support/tickets', { method: 'POST', body: JSON.stringify(data) }),
@@ -200,6 +187,11 @@ export const rtoAPI = {
   getOfficesByState: (state) => authenticatedFetch(`/api/v1/rto/state/${state}`),
   getOfficesByCity: (city) => authenticatedFetch(`/api/v1/rto/city/${city}`),
   bulkImportOffices: (data) => authenticatedFetch('/api/v1/rto/bulk-import', { method: 'POST', body: JSON.stringify(data) }),
+};
+
+// Chatbot API
+export const chatbotAPI = {
+  sendQuery: (message) => authenticatedFetch('/api/v1/chatbot/query', { method: 'POST', body: JSON.stringify({ message }) }),
 };
 
 // Export the axios instance as both named and default export
