@@ -9,6 +9,7 @@ const AdminAgentDetail = () => {
   const [agentData, setAgentData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     const fetchAgentDetails = async () => {
       try {

@@ -141,16 +141,12 @@ const Billing = () => {
           order_id: order.id,
           handler: async function (response) {
             try {
-              const verificationData = {
+              const verifyResponse = await billingAPI.verifyTopupPayment({
                 gateway: 'razorpay',
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                base_amount,
-                transaction_fee,
-                gst_amount
-              };
-              const verifyResponse = await billingAPI.verifyTopupPayment(verificationData);
+                razorpay_signature: response.razorpay_signature
+              });
               toast.success(verifyResponse.data.message);
               setShowTopUpModal(false);
               setTopUpAmount('');
