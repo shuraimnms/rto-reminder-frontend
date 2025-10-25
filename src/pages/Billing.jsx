@@ -123,42 +123,11 @@ const Billing = () => {
 
       const data = response.data.data;
       if (response.data.success) {
-        if (data.gateway === 'razorpay') {
-          // Handle Razorpay payment
-          const options = {
-            key: data.keyId,
-            amount: data.amount * 100, // Razorpay expects amount in paisa
-            currency: 'INR',
-            name: 'RTO Reminder System',
-            description: 'Wallet Top-up',
-            order_id: data.razorpayOrderId,
-            handler: function (response) {
-              // Payment successful
-              toast.success('Payment successful! Wallet will be updated shortly.');
-              setShowTopUpModal(false);
-              setTopUpAmount('');
-              fetchWalletBalance();
-              fetchTransactions();
-            },
-            prefill: {
-              name: user?.name || '',
-              email: user?.email || '',
-              contact: user?.phone || ''
-            },
-            notes: {
-              orderId: data.orderId
-            },
-            theme: {
-              color: '#3B82F6'
-            }
-          };
-          const rzp = new window.Razorpay(options);
-          rzp.open();
-        } else if (data.gateway === 'jojoupi' && data.paymentUrl) {
+        if (data.gateway === 'jojoupi' && data.paymentUrl) {
           // Redirect to JojoUPI payment page
           window.location.href = data.paymentUrl;
         } else {
-          toast.error('Unsupported payment gateway');
+          toast.error('Could not retrieve payment URL. Please try again.');
         }
       } else {
         toast.error('Failed to create payment order');

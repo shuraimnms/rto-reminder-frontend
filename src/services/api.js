@@ -83,7 +83,6 @@ export const billingAPI = {
   getWalletBalance: () => authenticatedFetch('/api/v1/billing/wallet/balance'),
   getTransactions: (params) => authenticatedFetch(`/api/v1/billing/transactions?${new URLSearchParams(params).toString()}`),
   createTopupOrder: (data) => authenticatedFetch('/api/v1/billing/wallet/topup', { method: 'POST', body: JSON.stringify(data) }),
-  verifyTopupPayment: (data) => authenticatedFetch('/api/v1/billing/wallet/topup/verify', { method: 'POST', body: JSON.stringify(data) }),
   getInvoices: (params) => authenticatedFetch(`/api/v1/billing/invoices?${new URLSearchParams(params).toString()}`),
   getInvoiceById: (id) => authenticatedFetch(`/api/v1/billing/invoices/${id}`),
   getBillingAnalytics: () => authenticatedFetch('/api/v1/billing/analytics'),
