@@ -6,6 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 
+
+
 const Billing = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -22,7 +24,7 @@ const Billing = () => {
   const [topUpAmount, setTopUpAmount] = useState('');
   const [topUpDetails, setTopUpDetails] = useState(null);
   const [topUpLoading, setTopUpLoading] = useState(false);
-  const [selectedGateway, setSelectedGateway] = useState('razorpay');
+
   const [perMessageCost, setPerMessageCost] = useState(1.00);
   const [messagesSentToday, setMessagesSentToday] = useState(0);
   const [totalCredits, setTotalCredits] = useState(0);
@@ -104,82 +106,66 @@ const Billing = () => {
   const handleTopUpAmountChange = (e) => {
     const amount = e.target.value;
     setTopUpAmount(amount);
-    if (amount && parseFloat(amount) >= 99) {
-      const baseAmount = parseFloat(amount);
-      const transactionFee = baseAmount * 0.02;
-      const gstAmount = transactionFee * 0.18;
-      const totalAmount = baseAmount + transactionFee + gstAmount;
-      setTopUpDetails({ baseAmount, transactionFee, gstAmount, totalAmount });
-    } else {
-      setTopUpDetails(null);
-    }
   };
 
   const handleTopUp = async (e) => {
     e.preventDefault();
-    if (!topUpDetails) {
-      toast.error('Please enter a valid amount (min ₹99)');
+    if (!topUpAmount || parseFloat(topUpAmount) < 1) {
+      toast.error('Please enter a valid amount (min ₹1)');
       return;
     }
 
     setTopUpLoading(true);
     try {
       const response = await billingAPI.createTopupOrder({
-        amount: topUpDetails.baseAmount, // Send amount in INR
-        gateway: selectedGateway
+        amount: parseFloat(topUpAmount)
       });
 
-      if (selectedGateway === 'razorpay') {
-        const { order, base_amount, transaction_fee, gst_amount } = response.data.data;
-
-        const options = {
-          key: response.data.data.key_id,
-          amount: order.amount,
-          currency: order.currency,
-          name: 'RTO Reminder System',
-          description: 'Wallet Top-up',
-          order_id: order.id,
-          handler: async function (response) {
-            try {
-              const verifyResponse = await billingAPI.verifyTopupPayment({
-                gateway: 'razorpay',
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              });
-              toast.success(verifyResponse.data.message);
+      const data = response.data.data;
+      if (response.data.success) {
+        if (data.gateway === 'razorpay') {
+          // Handle Razorpay payment
+          const options = {
+            key: data.keyId,
+            amount: data.amount * 100, // Razorpay expects amount in paisa
+            currency: 'INR',
+            name: 'RTO Reminder System',
+            description: 'Wallet Top-up',
+            order_id: data.razorpayOrderId,
+            handler: function (response) {
+              // Payment successful
+              toast.success('Payment successful! Wallet will be updated shortly.');
               setShowTopUpModal(false);
               setTopUpAmount('');
-              setTopUpDetails(null);
               fetchWalletBalance();
               fetchTransactions();
-              fetchInvoices();
-            } catch (verifyError) {
-              toast.error(verifyError.response?.data?.message || 'Payment verification failed.');
+            },
+            prefill: {
+              name: user?.name || '',
+              email: user?.email || '',
+              contact: user?.phone || ''
+            },
+            notes: {
+              orderId: data.orderId
+            },
+            theme: {
+              color: '#3B82F6'
             }
-          },
-          prefill: {
-            name: user?.name || '',
-            email: user?.email || '',
-          },
-          theme: {
-            color: '#3B82F6',
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else if (selectedGateway === 'cashfree') {
-        const { order, base_amount, transaction_fee, gst_amount } = response.data.data;
-
-        // Redirect to Cashfree payment page
-        window.location.href = order.payment_link;
-        return;
+          };
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        } else if (data.gateway === 'jojoupi' && data.paymentUrl) {
+          // Redirect to JojoUPI payment page
+          window.location.href = data.paymentUrl;
+        } else {
+          toast.error('Unsupported payment gateway');
+        }
+      } else {
+        toast.error('Failed to create payment order');
       }
-
     } catch (error) {
-      console.log('Topup error:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to top up wallet';
+      console.error('Topup error:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to create payment order';
       toast.error(errorMessage);
     } finally {
       setTopUpLoading(false);
@@ -204,7 +190,7 @@ const Billing = () => {
       'refund': { label: 'Refund', bg: 'bg-blue-100', text: 'text-blue-800' },
       'transaction_fee': { label: 'Fee', bg: 'bg-orange-100', text: 'text-orange-800' },
       'gst': { label: 'GST', bg: 'bg-orange-100', text: 'text-orange-800' },
-    };
+    };o
     const config = typeMap[type] || { label: type, bg: 'bg-gray-100', text: 'text-gray-800' };
     return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>{config.label}</span>;
   };
@@ -508,68 +494,20 @@ const Billing = () => {
             <form onSubmit={handleTopUp} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Payment Gateway
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gateway"
-                      value="razorpay"
-                      checked={selectedGateway === 'razorpay'}
-                      onChange={(e) => setSelectedGateway(e.target.value)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">Razorpay</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gateway"
-                      value="cashfree"
-                      checked={selectedGateway === 'cashfree'}
-                      onChange={(e) => setSelectedGateway(e.target.value)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">Cashfree</span>
-                  </label>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Amount (₹)
                 </label>
                 <input
                   type="number"
-                  min="99"
+                  min="1"
                   step="0.01"
                   value={topUpAmount}
                   onChange={handleTopUpAmountChange}
                   className="input w-full"
-                  placeholder="Enter amount (min ₹99)"
+                  placeholder="Enter amount (min ₹1)"
                   required
                 />
               </div>
-              {topUpDetails && (
-                <div className="p-4 bg-gray-50 rounded-lg text-sm space-y-2">
-                  <div className="flex justify-between">
-                    <span>Top-up Amount:</span>
-                    <span>₹{topUpDetails.baseAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Transaction Fee (2%):</span>
-                    <span>₹{topUpDetails.transactionFee.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>GST (18% on fee):</span>
-                    <span>₹{topUpDetails.gstAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between font-bold border-t pt-2 mt-2">
-                    <span>Total Payable:</span>
-                    <span>₹{topUpDetails.totalAmount.toFixed(2)}</span>
-                  </div>
-                </div>
-              )}
+
 
               <div className="flex justify-end space-x-3">
                 <button
@@ -583,7 +521,7 @@ const Billing = () => {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={topUpLoading || !topUpDetails}
+                  disabled={topUpLoading}
                 >
                   {topUpLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

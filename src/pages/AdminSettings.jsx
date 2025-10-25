@@ -103,6 +103,16 @@ const AdminSettings = () => {
     }));
   };
 
+  const updateJojoUpi = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      jojoUpi: {
+        ...prev.jojoUpi,
+        [field]: value
+      }
+    }));
+  };
+
   const updatePaymentGateway = (field, value) => {
     setSettings(prev => ({
       ...prev,
@@ -315,12 +325,13 @@ const AdminSettings = () => {
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Primary Payment Gateway</label>
               <select
-                value={settings?.paymentGateway?.primary || 'razorpay'}
+                value={settings?.paymentGateway?.primary || 'jojoupi'}
                 onChange={(e) => updatePaymentGateway('primary', e.target.value)}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="razorpay">Razorpay</option>
                 <option value="cashfree">Cashfree</option>
+                <option value="jojoupi">JojoUPI</option>
               </select>
               <p className="mt-1 text-sm text-gray-500">
                 Select the primary payment gateway for processing transactions.
@@ -386,7 +397,7 @@ const AdminSettings = () => {
             </div>
 
             {/* Cashfree Settings */}
-            <div>
+            <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-md font-medium text-gray-900">Cashfree</h4>
                 <div className="flex items-center">
@@ -440,6 +451,57 @@ const AdminSettings = () => {
                 <p className="mt-1 text-sm text-gray-500">
                   Enable this for live payments. Keep disabled for testing.
                 </p>
+              </div>
+            </div>
+
+            {/* JojoUPI Settings */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-md font-medium text-gray-900">JojoUPI</h4>
+                <div className="flex items-center">
+                  <input
+                    id="jojoupiEnabled"
+                    type="checkbox"
+                    checked={settings?.jojoUpi?.enabled !== false}
+                    onChange={(e) => updateJojoUpi('enabled', e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="jojoupiEnabled" className="ml-2 block text-sm text-gray-900">
+                    Enable JojoUPI
+                  </label>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">API Key</label>
+                  <input
+                    type="password"
+                    value={settings?.jojoUpi?.apiKey || ''}
+                    onChange={(e) => updateJojoUpi('apiKey', e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter JojoUPI API Key"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">API URL</label>
+                  <input
+                    type="text"
+                    value={settings?.jojoUpi?.apiUrl || ''}
+                    onChange={(e) => updateJojoUpi('apiUrl', e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter JojoUPI API URL"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Callback URL</label>
+                  <input
+                    type="text"
+                    value={settings?.jojoUpi?.callbackUrl || ''}
+                    onChange={(e) => updateJojoUpi('callbackUrl', e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter Callback URL"
+                  />
+                </div>
               </div>
             </div>
           </div>
