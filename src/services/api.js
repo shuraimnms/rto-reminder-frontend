@@ -39,7 +39,13 @@ const authenticatedFetch = async (endpoint, options = {}) => {
     }
   }
 
-  return response.json();
+  // Handle different response types
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json();
+  }
+  // For file downloads or other non-JSON responses
+  return response.blob();
 };
 
 // Auth API
@@ -82,12 +88,13 @@ export const remindersAPI = {
 export const billingAPI = {
   getWalletBalance: () => authenticatedFetch('/api/v1/billing/wallet/balance'),
   getTransactions: (params) => authenticatedFetch(`/api/v1/billing/transactions?${new URLSearchParams(params).toString()}`),
-  createTopupOrder: (data) => authenticatedFetch('/api/v1/billing/wallet/topup', { method: 'POST', body: JSON.stringify(data) }),
+  createTopupOrder: (data) => authenticatedFetch('/api/v1/payment/create-link', { method: 'POST', body: JSON.stringify(data) }),
+  verifyPayment: (data) => authenticatedFetch('/api/v1/payment/verify', { method: 'POST', body: JSON.stringify(data) }),
   getInvoices: (params) => authenticatedFetch(`/api/v1/billing/invoices?${new URLSearchParams(params).toString()}`),
   getInvoiceById: (id) => authenticatedFetch(`/api/v1/billing/invoices/${id}`),
   getBillingAnalytics: () => authenticatedFetch('/api/v1/billing/analytics'),
   getPaymentHistory: (params) => authenticatedFetch(`/api/v1/billing/payments?${new URLSearchParams(params).toString()}`)
-};
+};;
 
 // Settings API
 export const settingsAPI = {
@@ -129,7 +136,7 @@ export const adminAPI = {
   deleteCustomer: (id) => authenticatedFetch(`/api/v1/admin/customers/${id}`, { method: 'DELETE' }),
   getAgents: () => authenticatedFetch('/api/v1/admin/agents'),
   getMessages: (params) => authenticatedFetch(`/api/v1/admin/messages?${new URLSearchParams(params).toString()}`),
-  exportMessages: (params) => authenticatedFetch(`/api/v1/admin/messages/export?${new URLSearchParams(params).toString()}`, { method: 'GET' }),
+  exportMessages: (params) => authenticatedFetch(`/api/v1/admin/messages/export?${new URLSearchParams(params).toString()}`),
 
   // Notifications
   sendNotification: (data) => authenticatedFetch('/api/v1/notifications/send', { method: 'POST', body: JSON.stringify(data) }),
