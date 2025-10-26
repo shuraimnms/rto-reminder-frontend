@@ -110,8 +110,8 @@ const Billing = () => {
 
   const handleTopUp = async (e) => {
     e.preventDefault();
-    if (!topUpAmount || parseFloat(topUpAmount) < 1) {
-      toast.error('Please enter a valid amount (min ₹1)');
+    if (!topUpAmount || parseFloat(topUpAmount) < 10) {
+      toast.error('Please enter a valid amount (min ₹10)');
       return;
     }
 
@@ -159,7 +159,7 @@ const Billing = () => {
       'refund': { label: 'Refund', bg: 'bg-blue-100', text: 'text-blue-800' },
       'transaction_fee': { label: 'Fee', bg: 'bg-orange-100', text: 'text-orange-800' },
       'gst': { label: 'GST', bg: 'bg-orange-100', text: 'text-orange-800' },
-    };o
+    };
     const config = typeMap[type] || { label: type, bg: 'bg-gray-100', text: 'text-gray-800' };
     return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>{config.label}</span>;
   };
@@ -467,12 +467,12 @@ const Billing = () => {
                 </label>
                 <input
                   type="number"
-                  min="1"
+                  min="10"
                   step="0.01"
                   value={topUpAmount}
                   onChange={handleTopUpAmountChange}
                   className="input w-full"
-                  placeholder="Enter amount (min ₹1)"
+                  placeholder="Enter amount (min ₹10)"
                   required
                 />
               </div>
