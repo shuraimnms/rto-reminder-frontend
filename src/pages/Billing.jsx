@@ -123,9 +123,9 @@ const Billing = () => {
 
       const data = response.data.data;
       if (response.data.success) {
-        if (data.gateway === 'jojoupi' && data.paymentUrl) {
-          // Redirect to JojoUPI payment page
-          window.location.href = data.paymentUrl;
+        if ((data.gateway === 'jojoupi' || data.gateway === 'cashfree') && data.payment_url) {
+          // Redirect to payment page
+          window.location.href = data.payment_url;
         } else {
           toast.error('Could not retrieve payment URL. Please try again.');
         }
