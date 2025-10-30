@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { remindersAPI } from '../services/api';
 import { demoStats } from '../utils/demoData';
+import PayButton from '../components/PayButton';
 import {
   Users,
   Bell,
@@ -302,13 +303,9 @@ const Dashboard = () => {
             <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
             <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Test Message</p>
           </Link>
-          <Link
-            to="/billing"
-            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
-          >
-            <Wallet className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
-            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Top Up Wallet</p>
-          </Link>
+          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300">
+            <PayButton onBalanceUpdate={loadDashboardData} />
+          </div>
         </div>
       </div>
     </div>

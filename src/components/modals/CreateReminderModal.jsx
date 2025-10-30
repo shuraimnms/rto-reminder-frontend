@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { X, Calendar, Car, User, AlertTriangle } from 'lucide-react';
-import { remindersAPI, customersAPI, billingAPI } from '../../services/api';
+import { remindersAPI, customersAPI, payAPI } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import InsufficientBalancePopup from './InsufficientBalancePopup';
@@ -48,8 +48,8 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
 
   const checkWalletBalance = async () => {
     try {
-      const response = await billingAPI.getWalletBalance();
-      const balance = response.data.balance || 0;
+      const response = await payAPI.getBalance();
+      const balance = response.balance || 0;
       setWalletBalance(balance);
       return balance;
     } catch (error) {

@@ -84,17 +84,15 @@ export const remindersAPI = {
 
 
 
-// Billing API
-export const billingAPI = {
-  getWalletBalance: () => authenticatedFetch('/api/v1/billing/wallet/balance'),
-  getTransactions: (params) => authenticatedFetch(`/api/v1/billing/transactions?${new URLSearchParams(params).toString()}`),
-  createTopupOrder: (data) => authenticatedFetch('/api/v1/payment/create-link', { method: 'POST', body: JSON.stringify(data) }),
-  verifyPayment: (data) => authenticatedFetch('/api/v1/payment/verify', { method: 'POST', body: JSON.stringify(data) }),
-  getInvoices: (params) => authenticatedFetch(`/api/v1/billing/invoices?${new URLSearchParams(params).toString()}`),
-  getInvoiceById: (id) => authenticatedFetch(`/api/v1/billing/invoices/${id}`),
-  getBillingAnalytics: () => authenticatedFetch('/api/v1/billing/analytics'),
-  getPaymentHistory: (params) => authenticatedFetch(`/api/v1/billing/payments?${new URLSearchParams(params).toString()}`)
-};;
+// Pay API
+export const payAPI = {
+  addBalance: (data) => authenticatedFetch('/api/v1/pay/add-balance', { method: 'POST', body: JSON.stringify(data) }),
+  getBalance: () => authenticatedFetch('/api/v1/pay/balance'),
+  getTransactionHistory: () => authenticatedFetch('/api/v1/pay/history'),
+  verifyPayment: (transactionId) => authenticatedFetch(`/api/v1/pay/verify-payment/${transactionId}`),
+};
+
+// Billing API (removed)
 
 // Settings API
 export const settingsAPI = {

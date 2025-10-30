@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { WalletProvider } from './contexts/WalletContext';
 import Layout from './components/layout/Layout';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
@@ -29,7 +30,6 @@ import FraudAlerts from './pages/FraudAlerts';
 import Customers from './pages/Customers';
 import Reminders from './pages/Reminders';
 
-import Billing from './pages/Billing';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Settings from './pages/Settings';
 import ScrollToTop from './components/ScrollToTop';
@@ -90,7 +90,7 @@ function DashboardRoute() {
   const { isAdmin } = useAuth();
 
   if (isAdmin) {
-    return <Navigate to="/admin/agents" />;
+    return <Navigate to="/admin/dashboard" />;
   }
 
   return (
@@ -106,7 +106,8 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Router>
+        <WalletProvider>
+          <Router>
           <ScrollToTop />
         <div className="App">
           <Toaster
@@ -148,7 +149,6 @@ function App() {
               <Route path="/customers" element={<Customers />} />
               <Route path="/reminders" element={<Reminders />} />
 
-              <Route path="/billing" element={<Billing />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/guidance" element={<Guidance />} />
               <Route path="/support" element={<Support />} />
@@ -178,6 +178,7 @@ function App() {
           </Routes>
         </div>
         </Router>
+        </WalletProvider>
       </ThemeProvider>
     </AuthProvider>
   );

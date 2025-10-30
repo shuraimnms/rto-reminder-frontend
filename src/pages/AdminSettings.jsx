@@ -122,29 +122,42 @@ const AdminSettings = () => {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">Global Settings</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Manage system-wide settings including MSG91 configuration and pricing
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
+        <div className="sm:flex sm:items-center mb-8">
+          <div className="sm:flex-auto">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Global Settings
+            </h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Manage system-wide settings including MSG91 configuration, pricing, and wallet controls
+            </p>
+          </div>
         </div>
-      </div>
 
-      {error && (
-        <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-sm">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </div>
+          </div>
+        )}
 
-      {success && (
-        <div className="mt-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-          {success}
-        </div>
-      )}
+        {success && (
+          <div className="mt-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg shadow-sm">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              {success}
+            </div>
+          </div>
+        )}
 
-      <div className="mt-8 space-y-8">
+        <div className="mt-8 space-y-8">
         {/* MSG91 Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -158,6 +171,7 @@ const AdminSettings = () => {
                   onChange={(e) => updateMSG91Settings('authKey', e.target.value)}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter MSG91 Auth Key"
+                  required
                 />
               </div>
               <div>
@@ -168,6 +182,7 @@ const AdminSettings = () => {
                   onChange={(e) => updateMSG91Settings('senderId', e.target.value)}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter Sender ID"
+                  required
                 />
               </div>
             </div>
@@ -273,6 +288,191 @@ const AdminSettings = () => {
           </div>
         </div>
 
+        {/* Wallet Settings */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Wallet Configuration</h3>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Minimum Top-up Amount (INR)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="1000"
+                  value={settings?.wallet?.min_topup_amount || ''}
+                  onChange={(e) => setSettings(prev => ({
+                    ...prev,
+                    wallet: {
+                      ...prev.wallet,
+                      min_topup_amount: parseInt(e.target.value)
+                    }
+                  }))}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Maximum Top-up Amount (INR)</label>
+                <input
+                  type="number"
+                  min="100"
+                  max="50000"
+                  value={settings?.wallet?.max_topup_amount || ''}
+                  onChange={(e) => setSettings(prev => ({
+                    ...prev,
+                    wallet: {
+                      ...prev.wallet,
+                      max_topup_amount: parseInt(e.target.value)
+                    }
+                  }))}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="10000"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-md font-medium text-gray-900 mb-3">Quick Top-up Amounts</h4>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+                {[100, 500, 1000, 2000, 5000].map((amount) => (
+                  <div key={amount}>
+                    <label className="block text-sm font-medium text-gray-700">₹{amount}</label>
+                    <input
+                      type="checkbox"
+                      checked={settings?.wallet?.topup_amounts?.includes(amount) || false}
+                      onChange={(e) => {
+                        const currentAmounts = settings?.wallet?.topup_amounts || [];
+                        if (e.target.checked) {
+                          setSettings(prev => ({
+                            ...prev,
+                            wallet: {
+                              ...prev.wallet,
+                              topup_amounts: [...currentAmounts, amount].sort((a, b) => a - b)
+                            }
+                          }));
+                        } else {
+                          setSettings(prev => ({
+                            ...prev,
+                            wallet: {
+                              ...prev.wallet,
+                              topup_amounts: currentAmounts.filter(a => a !== amount)
+                            }
+                          }));
+                        }
+                      }}
+                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-md font-medium text-gray-900 mb-3">Top-up Limits</h4>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Daily Top-up Limit (INR)</label>
+                  <input
+                    type="number"
+                    min="100"
+                    max="100000"
+                    value={settings?.wallet?.daily_topup_limit || ''}
+                    onChange={(e) => setSettings(prev => ({
+                      ...prev,
+                      wallet: {
+                        ...prev.wallet,
+                        daily_topup_limit: parseInt(e.target.value)
+                      }
+                    }))}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="5000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Monthly Top-up Limit (INR)</label>
+                  <input
+                    type="number"
+                    min="1000"
+                    max="500000"
+                    value={settings?.wallet?.monthly_topup_limit || ''}
+                    onChange={(e) => setSettings(prev => ({
+                      ...prev,
+                      wallet: {
+                        ...prev.wallet,
+                        monthly_topup_limit: parseInt(e.target.value)
+                      }
+                    }))}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="25000"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-md font-medium text-gray-900 mb-3">Auto Top-up Settings</h4>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <div className="flex items-center">
+                  <input
+                    id="auto_topup_enabled"
+                    type="checkbox"
+                    checked={settings?.wallet?.auto_topup_enabled || false}
+                    onChange={(e) => setSettings(prev => ({
+                      ...prev,
+                      wallet: {
+                        ...prev.wallet,
+                        auto_topup_enabled: e.target.checked
+                      }
+                    }))}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="auto_topup_enabled" className="ml-2 block text-sm text-gray-900">
+                    Enable Auto Top-up
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Threshold Amount (INR)</label>
+                  <input
+                    type="number"
+                    min="10"
+                    max="1000"
+                    value={settings?.wallet?.auto_topup_threshold || ''}
+                    onChange={(e) => setSettings(prev => ({
+                      ...prev,
+                      wallet: {
+                        ...prev.wallet,
+                        auto_topup_threshold: parseInt(e.target.value)
+                      }
+                    }))}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="50"
+                    disabled={!settings?.wallet?.auto_topup_enabled}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Auto Top-up Amount (INR)</label>
+                  <input
+                    type="number"
+                    min="100"
+                    max="5000"
+                    value={settings?.wallet?.auto_topup_amount || ''}
+                    onChange={(e) => setSettings(prev => ({
+                      ...prev,
+                      wallet: {
+                        ...prev.wallet,
+                        auto_topup_amount: parseInt(e.target.value)
+                      }
+                    }))}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="500"
+                    disabled={!settings?.wallet?.auto_topup_enabled}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* System Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -304,147 +504,10 @@ const AdminSettings = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Payment Gateway Settings */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Gateway Configuration</h3>
-
-            {/* Primary Gateway Selection */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Primary Payment Gateway</label>
-              <select
-                value={settings?.paymentGateway?.primary || 'cashfree'}
-                onChange={(e) => updatePaymentGateway('primary', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="cashfree">Cashfree</option>
-              </select>
-              <p className="mt-1 text-sm text-gray-500">
-                Select the primary payment gateway for processing transactions.
-              </p>
-            </div>
-
-            {/* Razorpay Settings */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-md font-medium text-gray-900">Razorpay</h4>
-                <div className="flex items-center">
-                  <input
-                    id="razorpayEnabled"
-                    type="checkbox"
-                    checked={settings?.razorpay?.enabled !== false}
-                    onChange={(e) => updateRazorpay('enabled', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="razorpayEnabled" className="ml-2 block text-sm text-gray-900">
-                    Enable Razorpay
-                  </label>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Key ID</label>
-                  <input
-                    type="text"
-                    value={settings?.razorpay?.keyId || ''}
-                    onChange={(e) => updateRazorpay('keyId', e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter Razorpay Key ID"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Key Secret</label>
-                  <input
-                    type="password"
-                    value={settings?.razorpay?.keySecret || ''}
-                    onChange={(e) => updateRazorpay('keySecret', e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter Razorpay Key Secret"
-                  />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center">
-                  <input
-                    id="razorpayProduction"
-                    type="checkbox"
-                    checked={settings?.razorpay?.isProduction || false}
-                    onChange={(e) => updateRazorpay('isProduction', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="razorpayProduction" className="ml-2 block text-sm text-gray-900">
-                    Production Mode
-                  </label>
-                </div>
-                <p className="mt-1 text-sm text-gray-500">
-                  Enable this for live payments. Keep disabled for testing.
-                </p>
-              </div>
-            </div>
-
-            {/* Cashfree Settings */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-md font-medium text-gray-900">Cashfree</h4>
-                <div className="flex items-center">
-                  <input
-                    id="cashfreeEnabled"
-                    type="checkbox"
-                    checked={settings?.cashfree?.enabled || false}
-                    onChange={(e) => updateCashfree('enabled', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="cashfreeEnabled" className="ml-2 block text-sm text-gray-900">
-                    Enable Cashfree
-                  </label>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">App ID</label>
-                  <input
-                    type="text"
-                    value={settings?.cashfree?.appId || ''}
-                    onChange={(e) => updateCashfree('appId', e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter Cashfree App ID"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Secret Key</label>
-                  <input
-                    type="password"
-                    value={settings?.cashfree?.secretKey || ''}
-                    onChange={(e) => updateCashfree('secretKey', e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter Cashfree Secret Key"
-                  />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center">
-                  <input
-                    id="cashfreeProduction"
-                    type="checkbox"
-                    checked={settings?.cashfree?.isProduction || false}
-                    onChange={(e) => updateCashfree('isProduction', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="cashfreeProduction" className="ml-2 block text-sm text-gray-900">
-                    Production Mode
-                  </label>
-                </div>
-                <p className="mt-1 text-sm text-gray-500">
-                  Enable this for live payments. Keep disabled for testing.
-                </p>
-              </div>
-            </div>
-
-
           </div>
         </div>
+
+
 
         {/* Save Button */}
         <div className="flex justify-end">
