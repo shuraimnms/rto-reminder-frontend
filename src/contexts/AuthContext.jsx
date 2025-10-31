@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
         const response = await authAPI.getMe();
         const { agent } = response.data; // Correctly destructure the nested data object
         setUser(agent);
-        setIsAdmin(agent.role === 'super_admin');
+        setIsAdmin(agent.role === 'admin' || agent.role === 'super_admin');
       } else {
         // Token is missing or expired, clear it and set user to null
         localStorage.removeItem('authToken');
@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
 
       localStorage.setItem('authToken', token);
       setUser(agent);
-      setIsAdmin(agent.role === 'super_admin');
+      setIsAdmin(agent.role === 'admin' || agent.role === 'super_admin');
 
       toast.success('Login successful!');
       return { success: true };

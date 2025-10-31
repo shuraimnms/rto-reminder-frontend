@@ -159,7 +159,7 @@ const Dashboard = () => {
           value={`₹${overview.wallet_balance}`}
           icon={Wallet}
           color={user?.wallet_balance < 50 ? "bg-red-500" : "bg-purple-500"}
-          subtitle={`₹${overview.per_message_cost} per message`}
+          subtitle={<span className="font-bold text-blue-600">₹{overview.per_message_cost} per message (Realtime)</span>}
         />
         <StatCard
           title="Delivery Rate"
@@ -265,7 +265,7 @@ const Dashboard = () => {
             )}
             <div className="mt-4">
               <Link
-                to="/messages"
+                to="/message-logs"
                 className="text-blue-600 hover:text-blue-700 text-sm font-medium theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300"
               >
                 View all messages →

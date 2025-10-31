@@ -340,7 +340,7 @@ const About = () => {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/features" className="hover:text-white transition-colors">Features</Link></li>
                 <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link to="/support" className="hover:text-white transition-colors">Support</Link></li>
+
               </ul>
             </div>
             <div>

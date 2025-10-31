@@ -10,7 +10,7 @@ import Register from './pages/Auth/Register';
 import Landing from './pages/Landing';
 import Features from './pages/Features';
 import Pricing from './pages/Pricing';
-import Support from './pages/Support';
+
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
@@ -25,12 +25,16 @@ import AdminMessages from './pages/AdminMessages';
 import AdminNotifications from './pages/AdminNotifications';
 import AdminCustomers from './pages/AdminCustomers';
 import AuditLogs from './pages/AuditLogs';
-import AdminSupport from './pages/AdminSupport';
+
 import FraudAlerts from './pages/FraudAlerts';
 import Customers from './pages/Customers';
 import Reminders from './pages/Reminders';
+import Support from './pages/Support';
+import AdminSupport from './pages/AdminSupport';
 
 import PaymentSuccess from './pages/PaymentSuccess';
+import Billing from './pages/Billing';
+import MessageLogs from './pages/MessageLogs';
 import Settings from './pages/Settings';
 import ScrollToTop from './components/ScrollToTop';
 import './styles/globals.css';
@@ -148,10 +152,12 @@ function App() {
             <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
               <Route path="/customers" element={<Customers />} />
               <Route path="/reminders" element={<Reminders />} />
-
+              <Route path="/billing" element={<Billing />} />
+              <Route path="/message-logs" element={<MessageLogs />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/guidance" element={<Guidance />} />
               <Route path="/support" element={<Support />} />
+
               <Route path="/settings" element={<Settings />} />
             </Route>
 
@@ -171,8 +177,9 @@ function App() {
               <Route path="messages" element={<AdminMessages />} />
               <Route path="notifications" element={<AdminNotifications />} />
               <Route path="audit-logs" element={<AuditLogs />} />
-              <Route path="support" element={<AdminSupport />} />
+
               <Route path="fraud-alerts" element={<FraudAlerts />} />
+              <Route path="support" element={<AdminSupport />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>

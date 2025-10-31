@@ -95,8 +95,15 @@ const Layout = ({ children }) => {
     setNotifications(notifications.map(n => ({ ...n, read: true })));
   };
 
-  const handleClearAll = () => {
-    setNotifications([]);
+  const handleClearAll = async () => {
+    try {
+      await notificationAPI.clearAll();
+      setNotifications([]);
+      toast.success('All notifications cleared successfully');
+    } catch (error) {
+      toast.error('Failed to clear notifications');
+      console.error('Error clearing notifications:', error);
+    }
   };
 
   const navigation = [
@@ -105,8 +112,10 @@ const Layout = ({ children }) => {
     { name: 'Reminders', href: '/reminders', icon: Bell },
 
     { name: 'Billing', href: '/billing', icon: CreditCard },
+    { name: 'Message Logs', href: '/message-logs', icon: MessageSquare },
     { name: 'Guidance', href: '/guidance', icon: BookOpen },
-    { name: 'Support', href: '/support', icon: Mail },
+    { name: 'Support', href: '/support', icon: LifeBuoy },
+
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -116,7 +125,8 @@ const Layout = ({ children }) => {
     { name: 'All Customers', href: '/admin/customers', icon: Users },
     { name: 'All Messages', href: '/admin/messages', icon: MessageSquare },
     { name: 'Notifications', href: '/admin/notifications', icon: Mail },
-    { name: 'Support Tickets', href: '/admin/support', icon: LifeBuoy },
+    { name: 'Support', href: '/admin/support', icon: LifeBuoy },
+
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText },
     { name: 'Fraud Alerts', href: '/admin/fraud-alerts', icon: AlertTriangle },
     { name: 'Global Settings', href: '/admin/settings', icon: Shield },

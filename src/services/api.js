@@ -4,9 +4,14 @@ const api = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const authenticatedFetch = async (endpoint, options = {}) => {
   const token = localStorage.getItem('authToken');
   const headers = {
-    'Content-Type': 'application/json',
     ...options.headers,
   };
+
+  // Only set Content-Type to application/json if body is not FormData
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   // Don't add token for login and register endpoints
   if (token && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
     headers.Authorization = `Bearer ${token}`;
@@ -125,11 +130,7 @@ export const adminAPI = {
   getAllReminders: (params) => authenticatedFetch(`/api/v1/admin/reminders?${new URLSearchParams(params).toString()}`),
   getAllMessages: (params) => authenticatedFetch(`/api/v1/admin/messages?${new URLSearchParams(params).toString()}`),
   getAllTransactions: (params) => authenticatedFetch(`/api/v1/admin/transactions?${new URLSearchParams(params).toString()}`),
-  // Admin Support
-  getAllTickets: (params) => authenticatedFetch(`/api/v1/admin/support/tickets?${new URLSearchParams(params).toString()}`),
-  getTicketDetails: (id) => authenticatedFetch(`/api/v1/admin/support/tickets/${id}`),
-  updateTicket: (id, data) => authenticatedFetch(`/api/v1/admin/support/tickets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  addAdminReply: (id, data) => authenticatedFetch(`/api/v1/support/tickets/${id}/messages`, { method: 'POST', body: JSON.stringify(data) }), // Uses the same endpoint
+
   updateCustomer: (id, data) => authenticatedFetch(`/api/v1/admin/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCustomer: (id) => authenticatedFetch(`/api/v1/admin/customers/${id}`, { method: 'DELETE' }),
   getAgents: () => authenticatedFetch('/api/v1/admin/agents'),
@@ -159,13 +160,7 @@ export const adminAPI = {
   exportRevenue: () => authenticatedFetch('/api/v1/admin/export/revenue'),
 };
 
-// Support API (for Agents)
-export const supportAPI = {
-  createTicket: (data) => authenticatedFetch('/api/v1/support/tickets', { method: 'POST', body: JSON.stringify(data) }),
-  getAgentTickets: () => authenticatedFetch('/api/v1/support/tickets'),
-  getTicketById: (id) => authenticatedFetch(`/api/v1/support/tickets/${id}`),
-  addMessage: (id, data) => authenticatedFetch(`/api/v1/support/tickets/${id}/messages`, { method: 'POST', body: JSON.stringify(data) }),
-};
+
 
 // MSG91 API
 export const msg91API = {
@@ -178,6 +173,7 @@ export const notificationAPI = {
   getNotifications: (params = {}) => authenticatedFetch(`/api/v1/notifications?${new URLSearchParams(params).toString()}`),
   markAsRead: (notificationId) => authenticatedFetch(`/api/v1/notifications/${notificationId}/read`, { method: 'PUT' }),
   markAllAsRead: () => authenticatedFetch('/api/v1/notifications/mark-all-read', { method: 'PUT' }),
+  clearAll: () => authenticatedFetch('/api/v1/notifications/clear-all', { method: 'DELETE' }),
 };
 
 // RTO API
@@ -193,9 +189,34 @@ export const rtoAPI = {
   bulkImportOffices: (data) => authenticatedFetch('/api/v1/rto/bulk-import', { method: 'POST', body: JSON.stringify(data) }),
 };
 
+// Messages API
+export const messagesAPI = {
+  getMessageLogs: (params) => authenticatedFetch(`/api/v1/messages?${new URLSearchParams(params).toString()}`),
+  getMessageStats: (params) => authenticatedFetch(`/api/v1/messages/stats?${new URLSearchParams(params).toString()}`),
+  retryFailedMessages: () => authenticatedFetch('/api/v1/messages/retry-failed', { method: 'POST' }),
+};
+
 // Chatbot API
 export const chatbotAPI = {
   sendQuery: (message) => authenticatedFetch('/api/v1/chatbot/query', { method: 'POST', body: JSON.stringify({ message }) }),
+};
+
+// Support API functions
+export const supportAPI = {
+  createTicket: (data) => authenticatedFetch('/api/v1/support/tickets', { method: 'POST', body: data }),
+  getAgentTickets: (params) => authenticatedFetch(`/api/v1/support/tickets?${new URLSearchParams(params).toString()}`),
+  getTicket: (id) => authenticatedFetch(`/api/v1/support/tickets/${id}`),
+  addMessage: (id, data) => authenticatedFetch(`/api/v1/support/tickets/${id}/messages`, { method: 'POST', body: data }),
+  rateTicket: (id, data) => authenticatedFetch(`/api/v1/support/tickets/${id}/rate`, { method: 'POST', body: JSON.stringify(data) }),
+  updateTicket: (id, data) => authenticatedFetch(`/api/v1/support/tickets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteTicket: (id) => authenticatedFetch(`/api/v1/support/tickets/${id}`, { method: 'DELETE' }),
+
+  // Admin functions
+  getAllTickets: (params) => authenticatedFetch(`/api/v1/support/admin/tickets?${new URLSearchParams(params).toString()}`),
+  assignTicket: (id, data) => authenticatedFetch(`/api/v1/support/admin/tickets/${id}/assign`, { method: 'PUT', body: JSON.stringify(data) }),
+  updateTicketStatus: (id, data) => authenticatedFetch(`/api/v1/support/admin/tickets/${id}/status`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteAllTickets: () => authenticatedFetch('/api/v1/support/admin/tickets/delete-all', { method: 'DELETE' }),
+  getAnalytics: () => authenticatedFetch('/api/v1/support/admin/analytics')
 };
 
 // Export the axios instance as both named and default export
