@@ -10,8 +10,13 @@ const PayButton = ({ onBalanceUpdate }) => {
   const [quickAmounts, setQuickAmounts] = useState([100, 500, 1000, 2000, 5000]);
   const { refreshBalance } = useWallet();
 
+  // 🔹 Detect environment
+  const isProduction = window.location.hostname !== 'localhost';
+  const cashfreeMode = isProduction ? 'production' : 'sandbox';
+
   useEffect(() => {
     checkPaymentSettings();
+    ensureSDKInjected();
   }, []);
 
   const checkPaymentSettings = async () => {
@@ -27,29 +32,25 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
   };
 
-  // ✅ Load & initialise Cashfree SDK (v3)
-  const loadCashfreeSDK = async () => {
-    if (!window.Cashfree) {
-      // wait until the script loads
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          if (window.Cashfree) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 100);
-        // optionally add timeout
-        setTimeout(() => {
-          clearInterval(interval);
-          reject(new Error('Cashfree SDK script load timeout'));
-        }, 10000);
-      });
-    }
+  // ✅ Inject Cashfree SDK if missing
+  const ensureSDKInjected = () => {
+    if (document.querySelector('script[src*="cashfree"]')) return;
+    const script = document.createElement('script');
+    script.src = 'https://sdk.cashfree.com/js/ui/2.0.0/cashfree.prod.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => console.log('✅ Cashfree SDK script loaded');
+    script.onerror = (err) => console.error('❌ Failed to load Cashfree SDK.', err);
+    document.body.appendChild(script);
+  };
 
-    // Initialise the SDK instance (sandbox for testing)
-    const cashfree = window.Cashfree({ mode: 'sandbox' }); // switch to 'production' when live
-    console.log('✅ Cashfree SDK initialised:', cashfree);
-    return cashfree;
+  // ✅ Wait until Cashfree SDK is ready
+  const waitForCashfree = async (maxTries = 40, delay = 500) => {
+    for (let i = 1; i <= maxTries; i++) {
+      if (window.Cashfree) return window.Cashfree;
+      await new Promise((res) => setTimeout(res, delay));
+    }
+    throw new Error('⚠️ Cashfree SDK failed to load. Please refresh.');
   };
 
   const handleTopup = async (e) => {
@@ -61,45 +62,39 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
 
     setIsPaying(true);
-
     try {
       if (paymentEnabled) {
-        // Payment integration enabled: use Cashfree
+        // 🔹 Step 1: Create payment session from backend
         const response = await payAPI.initiateTopup({ amount: topupAmount });
+
         if (response.data && response.data.paymentSessionId) {
-          const cashfree = await loadCashfreeSDK();
+          const Cashfree = await waitForCashfree();
+          if (Cashfree && typeof Cashfree.checkout === 'function') {
+            const checkoutOptions = {
+              paymentSessionId: response.data.paymentSessionId,
+              redirectTarget: '_modal',
+            };
 
-          const checkoutOptions = {
-            paymentSessionId: response.data.paymentSessionId,
-            redirectTarget: '_self', // or '_blank', depending on flow
-            returnUrl: `https://yourdomain.com/payment-success?order_id=${response.data.orderId}`,
-            // you can add more options if required
-          };
-
-          cashfree
-            .checkout(checkoutOptions)
-            .then((result) => {
+            console.log(`🚀 Launching Cashfree Checkout in ${cashfreeMode} mode`);
+            Cashfree.checkout(checkoutOptions, { mode: cashfreeMode }).then((result) => {
               if (result.error) {
-                console.error('Payment failed:', result.error);
+                console.error('❌ Payment failed:', result.error);
                 toast.error('Payment failed. Please try again.');
                 window.location.href = '/payment-failed';
-              } else if (result.redirect) {
-                console.log('Redirecting to checkout...');
-                // Flow continues via redirect
               } else {
-                // Possibly immediate result (non-redirect payment mode)
-                console.log('Payment result:', result);
+                console.log('✅ Payment successful:', result);
+                toast.success('Payment successful!');
+                window.location.href = `/payment-success?order_id=${response.data.orderId}`;
               }
-            })
-            .catch((err) => {
-              console.error('Checkout error:', err);
-              toast.error('Payment initiation failed. Please try again.');
             });
+          } else {
+            throw new Error('Cashfree SDK not initialized properly.');
+          }
         } else {
           throw new Error('Failed to initiate payment session.');
         }
       } else {
-        // Direct wallet top-up (no payment gateway)
+        // 💰 Direct wallet top-up without payment gateway
         const response = await payAPI.addBalance({ amount: topupAmount });
         if (response.success) {
           toast.success(response.message || `₹${topupAmount} added successfully!`);
@@ -111,7 +106,7 @@ const PayButton = ({ onBalanceUpdate }) => {
         }
       }
     } catch (error) {
-      console.error('Failed to add balance:', error);
+      console.error('❌ Failed to add balance:', error);
       toast.error(error.response?.data?.message || error.message || 'Failed to add balance. Please try again.');
     } finally {
       setIsPaying(false);
