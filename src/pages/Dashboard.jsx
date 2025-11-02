@@ -1,0 +1,315 @@
+﻿﻿import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { remindersAPI } from '../services/api';
+import { demoStats } from '../utils/demoData';
+import PayButton from '../components/PayButton';
+import {
+  Users,
+  Bell,
+  MessageSquare,
+  Wallet,
+  TrendingUp,
+  AlertTriangle,
+  Calendar,
+  WifiOff
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+
+const StatCard = ({ title, value, icon: Icon, color, subtitle }) => (
+  <div className="card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="flex items-center">
+      <div className={`p-3 rounded-lg ${color}`}>
+        <Icon className="h-6 w-6 text-white" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+      </div>
+    </div>
+  </div>
+);
+
+const Dashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [demoMode, setDemoMode] = useState(false);
+  const { user, logout, authChecked } = useAuth();
+
+  useEffect(() => {
+    if (authChecked && user) {
+      loadDashboardData();
+    }
+  }, [authChecked, user]);
+
+  const loadDashboardData = async () => {
+    try {
+      const response = await remindersAPI.getDashboardStats();
+      setStats(response.data);
+      setDemoMode(false);
+    } catch (error) {
+      console.error('Dashboard error:', error);
+
+      // Check if it's an auth error or connection error
+      if (error.message === 'Unauthorized') {
+        // Auth error handled by AuthContext - no need to show error
+        // Don't show demo mode for auth errors
+        setStats(null);
+      } else {
+        toast.error('Using demo data - Backend not connected');
+        setStats(demoStats);
+        setDemoMode(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Mock data for demo when API is not available
+  const mockStats = {
+    overview: {
+      total_customers: 0,
+      total_reminders: 0,
+      wallet_balance: 0,
+      per_message_cost: 1.0
+    },
+    upcoming_reminders: [],
+    recent_messages: []
+  };
+
+  const displayStats = stats || demoStats;
+  const { overview, upcoming_reminders, recent_messages } = displayStats;
+
+  return (
+    <div className="space-y-6">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-bold">Welcome back, {user?.name}! 👋</h1>
+            <p className="text-blue-100 mt-2">
+              Here's what's happening with your RTO reminder system today.
+            </p>
+          </div>
+          {demoMode && (
+            <div className="flex items-center space-x-2 bg-blue-500 bg-opacity-50 px-3 py-2 rounded-lg">
+              <WifiOff className="h-4 w-4" />
+              <span className="text-sm">Demo Mode</span>
+            </div>
+          )}
+        </div>
+
+        {demoMode && (
+          <div className="mt-3 p-3 bg-blue-500 bg-opacity-30 rounded-lg">
+            <p className="text-sm">
+              <strong>Note:</strong> Using demo data. To see real data, make sure your backend is running on port 3000.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Low Balance Alert */}
+      {user?.wallet_balance < 50 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 mr-3" />
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800">Low Wallet Balance</h3>
+                <p className="text-sm text-yellow-700 mt-1">
+                  Your current balance is ₹{user.wallet_balance}. Please top up to continue sending messages.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/billing"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Top Up Now
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Customers"
+          value={overview.total_customers}
+          icon={Users}
+          color="bg-blue-500"
+        />
+        <StatCard
+          title="Active Reminders"
+          value={overview.total_reminders}
+          icon={Bell}
+          color="bg-green-500"
+        />
+        <StatCard
+          title="Wallet Balance"
+          value={`₹${overview.wallet_balance}`}
+          icon={Wallet}
+          color={user?.wallet_balance < 50 ? "bg-red-500" : "bg-purple-500"}
+          subtitle={<span className="font-bold text-blue-600">₹{overview.per_message_cost} per message (Realtime)</span>}
+        />
+        <StatCard
+          title="Delivery Rate"
+          value="98.5%"
+          icon={TrendingUp}
+          color="bg-orange-500"
+          subtitle="Last 30 days"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Upcoming Reminders */}
+        <div className="card bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Upcoming Reminders</h2>
+              <Calendar className="h-5 w-5 text-gray-400 theme-dark:text-slate-400" />
+            </div>
+          </div>
+          <div className="p-6">
+            {upcoming_reminders && upcoming_reminders.length > 0 ? (
+              <div className="space-y-4">
+                {upcoming_reminders.slice(0, 5).map((reminder) => (
+                  <div key={reminder._id} className="p-3 bg-gray-50 rounded-lg theme-dark:bg-slate-700 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                        <Calendar className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 theme-dark:text-white">{reminder.customer?.name || 'Customer'}</p>
+                        <p className="text-sm text-gray-600 theme-dark:text-slate-300">
+                          {reminder.reminder_type?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} • {reminder.customer?.vehicle_number || 'Vehicle'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900 theme-dark:text-white">
+                        {new Date(reminder.next_send_date).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4 theme-dark:text-slate-400">No upcoming reminders</p>
+            )}
+            <div className="mt-4">
+              <Link
+                to="/reminders"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300"
+              >
+                View all reminders →
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Messages */}
+        <div className="card bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Recent Messages</h2>
+              <MessageSquare className="h-5 w-5 text-gray-400 theme-dark:text-slate-400" />
+            </div>
+          </div>
+          <div className="p-6">
+            {recent_messages && recent_messages.length > 0 ? (
+              <div className="space-y-4">
+                {recent_messages.slice(0, 5).map((message) => (
+                  <div key={message._id} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${
+                        message.status === 'SENT' ? 'bg-green-500' :
+                        message.status === 'DELIVERED' ? 'bg-blue-500' :
+                        message.status === 'FAILED' ? 'bg-red-500' : 'bg-gray-500'
+                      }`} />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 theme-dark:text-white">
+                          {message.reminder?.customer?.name || 'Test Message'}
+                        </p>
+                        <p className="text-xs text-gray-500 theme-dark:text-slate-400">
+                          {message.template_name?.replace(/_/g, ' ') || 'Message'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 theme-dark:text-slate-400">
+                        {message.sent_at ? new Date(message.sent_at).toLocaleDateString() : 'N/A'}
+                      </p>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                        message.status === 'SENT' ? 'bg-green-100 text-green-800 theme-dark:bg-green-900 theme-dark:text-green-300' :
+                        message.status === 'DELIVERED' ? 'bg-blue-100 text-blue-800 theme-dark:bg-blue-900 theme-dark:text-blue-300' :
+                        message.status === 'FAILED' ? 'bg-red-100 text-red-800 theme-dark:bg-red-900 theme-dark:text-red-300' : 'bg-gray-100 text-gray-800 theme-dark:bg-slate-700 theme-dark:text-slate-300'
+                      }`}>
+                        {message.status || 'UNKNOWN'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4 theme-dark:text-slate-400">No recent messages</p>
+            )}
+            <div className="mt-4">
+              <Link
+                to="/message-logs"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300"
+              >
+                View all messages →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Map Integration */}
+
+
+      {/* Quick Actions */}
+      <div className="card p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 theme-dark:text-white">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            to="/customers?action=create"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+          >
+            <Users className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
+            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Add Customer</p>
+          </Link>
+          <Link
+            to="/reminders?action=create"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+          >
+            <Bell className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
+            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Create Reminder</p>
+          </Link>
+          <Link
+            to="/reminders?action=test"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+          >
+            <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
+            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Test Message</p>
+          </Link>
+          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300">
+            <PayButton onBalanceUpdate={loadDashboardData} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
