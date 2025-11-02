@@ -94,7 +94,10 @@ export const payAPI = {
   addBalance: (data) => authenticatedFetch('/api/v1/pay/add-balance', { method: 'POST', body: JSON.stringify(data) }),
   getBalance: () => authenticatedFetch('/api/v1/pay/balance'),
   getTransactionHistory: () => authenticatedFetch('/api/v1/pay/history'),
+<<<<<<< HEAD
   initiateTopup: (data) => authenticatedFetch('/api/v1/pay/topup', { method: 'POST', body: JSON.stringify(data) }),
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
   verifyPayment: (transactionId) => authenticatedFetch(`/api/v1/pay/verify-payment/${transactionId}`),
 };
 
@@ -159,8 +162,11 @@ export const adminAPI = {
   // Export
   exportWalletUsage: () => authenticatedFetch('/api/v1/admin/export/wallet-usage'),
   exportRevenue: () => authenticatedFetch('/api/v1/admin/export/revenue'),
+<<<<<<< HEAD
   exportRevenue: () => authenticatedFetch('/api/v1/admin/export/revenue'),
   getAgentRoleByEmail: (email) => authenticatedFetch(`/api/v1/admin/agent-role/${email}`),
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 };
 
 

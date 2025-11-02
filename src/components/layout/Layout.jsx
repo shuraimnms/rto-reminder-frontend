@@ -99,9 +99,15 @@ const Layout = ({ children }) => {
     try {
       await notificationAPI.clearAll();
       setNotifications([]);
+<<<<<<< HEAD
       // toast.success('All notifications cleared successfully');
     } catch (error) {
       // toast.error('Failed to clear notifications');
+=======
+      toast.success('All notifications cleared successfully');
+    } catch (error) {
+      toast.error('Failed to clear notifications');
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       console.error('Error clearing notifications:', error);
     }
   };
@@ -129,7 +135,10 @@ const Layout = ({ children }) => {
 
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText },
     { name: 'Fraud Alerts', href: '/admin/fraud-alerts', icon: AlertTriangle },
+<<<<<<< HEAD
     { name: 'Payment Integration Settings', href: '/admin/payment-settings', icon: CreditCard },
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
     { name: 'Global Settings', href: '/admin/settings', icon: Shield },
   ];
 

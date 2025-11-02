@@ -20,7 +20,10 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 
 import AdminAgents from './pages/AdminAgents';
 import AdminSettings from './pages/AdminSettings';
+<<<<<<< HEAD
 import PaymentSettings from './pages/admin/PaymentSettings';
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 import AdminAgentDetail from './pages/AdminAgentDetail';
 import AdminMessages from './pages/AdminMessages';
 import AdminNotifications from './pages/AdminNotifications';
@@ -34,7 +37,10 @@ import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
 
 import PaymentSuccess from './pages/PaymentSuccess';
+<<<<<<< HEAD
 import PaymentFailed from './pages/PaymentFailed';
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 import Billing from './pages/Billing';
 import MessageLogs from './pages/MessageLogs';
 import Settings from './pages/Settings';
@@ -157,7 +163,10 @@ function App() {
               <Route path="/billing" element={<Billing />} />
               <Route path="/message-logs" element={<MessageLogs />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
+<<<<<<< HEAD
               <Route path="/payment-failed" element={<PaymentFailed />} />
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
               <Route path="/guidance" element={<Guidance />} />
               <Route path="/support" element={<Support />} />
 
@@ -184,7 +193,10 @@ function App() {
               <Route path="fraud-alerts" element={<FraudAlerts />} />
               <Route path="support" element={<AdminSupport />} />
               <Route path="settings" element={<AdminSettings />} />
+<<<<<<< HEAD
               <Route path="payment-settings" element={<PaymentSettings />} />
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
             </Route>
           </Routes>
         </div>

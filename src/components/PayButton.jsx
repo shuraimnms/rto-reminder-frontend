@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { payAPI } from '../services/api';
 import { useWallet } from '../contexts/WalletContext';
+=======
+import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { payAPI } from '../services/api';
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 
 const PayButton = ({ onBalanceUpdate }) => {
   const [amount, setAmount] = useState('');
   const [isPaying, setIsPaying] = useState(false);
+<<<<<<< HEAD
   const [paymentEnabled, setPaymentEnabled] = useState(false);
   const [quickAmounts, setQuickAmounts] = useState([100, 500, 1000, 2000, 5000]);
   const { refreshBalance } = useWallet();
@@ -51,6 +58,8 @@ const PayButton = ({ onBalanceUpdate }) => {
     console.log('✅ Cashfree SDK initialised:', cashfree);
     return cashfree;
   };
+=======
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 
   const handleTopup = async (e) => {
     e.preventDefault();
@@ -61,6 +70,7 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
 
     setIsPaying(true);
+<<<<<<< HEAD
 
     try {
       if (paymentEnabled) {
@@ -109,6 +119,19 @@ const PayButton = ({ onBalanceUpdate }) => {
         } else {
           throw new Error(response.message || 'Failed to add balance');
         }
+=======
+    try {
+      const response = await payAPI.addBalance({ amount: topupAmount });
+
+      if (response.success) {
+        toast.success(response.message || `₹${topupAmount} added to your wallet successfully!`);
+        setAmount('');
+        if (onBalanceUpdate) {
+          onBalanceUpdate();
+        }
+      } else {
+        throw new Error(response.message || 'Failed to add balance');
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       }
     } catch (error) {
       console.error('Failed to add balance:', error);
@@ -118,6 +141,7 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
   };
 
+<<<<<<< HEAD
   const handleQuickAmount = (quickAmount) => {
     setAmount(quickAmount.toString());
   };
@@ -143,6 +167,11 @@ const PayButton = ({ onBalanceUpdate }) => {
         </div>
       </div>
 
+=======
+  return (
+    <div className="bg-white p-4 rounded-lg shadow">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Credits</h3>
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       <form onSubmit={handleTopup} className="space-y-4">
         <div>
           <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
@@ -166,6 +195,7 @@ const PayButton = ({ onBalanceUpdate }) => {
           disabled={isPaying}
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-indigo-300"
         >
+<<<<<<< HEAD
           {isPaying ? 'Processing...' : paymentEnabled ? 'Top Up Now' : 'Add Credits'}
         </button>
         <p className="text-xs text-gray-500 text-center">
@@ -173,6 +203,11 @@ const PayButton = ({ onBalanceUpdate }) => {
             ? 'You will be redirected to the payment gateway.'
             : 'Minimum top-up amount: ₹1.00'}
         </p>
+=======
+          {isPaying ? 'Processing...' : 'Add Credits'}
+        </button>
+        <p className="text-xs text-gray-500 text-center">Minimum top-up amount: ₹1.00</p>
+>>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       </form>
     </div>
   );
