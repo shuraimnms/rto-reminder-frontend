@@ -6,6 +6,7 @@ import ThemeSelector from '../ThemeSelector';
 import NotificationBell from '../NotificationBell';
 import Chatbot from '../Chatbot';
 import { format } from 'date-fns';
+import toast from 'react-hot-toast';
 
 import { notificationAPI } from '../../services/api';
 import {
@@ -42,12 +43,11 @@ const Layout = ({ children }) => {
           id: notification._id,
           title: notification.title,
           message: notification.message,
-          timestamp: format(new Date(notification.createdAt), 'PPpp'), // Consistent date formatting
+          timestamp: format(new Date(notification.createdAt), 'PPpp'),
           read: notification.isRead,
           type: notification.type || 'info'
         }));
 
-        // Add low balance notification if wallet is low
         if (user?.wallet_balance < 50) {
           const lowBalanceNotification = {
             id: 'low-balance',
@@ -63,12 +63,8 @@ const Layout = ({ children }) => {
         setNotifications(apiNotifications);
       } catch (error) {
         console.error('Failed to fetch notifications:', error);
-        // Don't show fallback notifications on auth errors
         if (error.message !== 'Unauthorized') {
-          // Only show fallback notifications for non-auth errors
           const fallbackNotifications = [];
-
-          // Add low balance notification if wallet is low
           if (user?.wallet_balance < 50) {
             const lowBalanceNotification = {
               id: 'low-balance',
@@ -80,13 +76,12 @@ const Layout = ({ children }) => {
             };
             fallbackNotifications.unshift(lowBalanceNotification);
           }
-
           setNotifications(fallbackNotifications);
         }
       }
     };
 
-    if (authChecked && user && user.name) { // Only fetch if auth is checked and user is properly authenticated
+    if (authChecked && user && user.name) {
       fetchNotifications();
     }
   }, [user?.wallet_balance, user?.name, authChecked]);
@@ -99,15 +94,9 @@ const Layout = ({ children }) => {
     try {
       await notificationAPI.clearAll();
       setNotifications([]);
-<<<<<<< HEAD
-      // toast.success('All notifications cleared successfully');
-    } catch (error) {
-      // toast.error('Failed to clear notifications');
-=======
       toast.success('All notifications cleared successfully');
     } catch (error) {
       toast.error('Failed to clear notifications');
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       console.error('Error clearing notifications:', error);
     }
   };
@@ -116,12 +105,10 @@ const Layout = ({ children }) => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Customers', href: '/customers', icon: Users },
     { name: 'Reminders', href: '/reminders', icon: Bell },
-
     { name: 'Billing', href: '/billing', icon: CreditCard },
     { name: 'Message Logs', href: '/message-logs', icon: MessageSquare },
     { name: 'Guidance', href: '/guidance', icon: BookOpen },
     { name: 'Support', href: '/support', icon: LifeBuoy },
-
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -132,23 +119,16 @@ const Layout = ({ children }) => {
     { name: 'All Messages', href: '/admin/messages', icon: MessageSquare },
     { name: 'Notifications', href: '/admin/notifications', icon: Mail },
     { name: 'Support', href: '/admin/support', icon: LifeBuoy },
-
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText },
     { name: 'Fraud Alerts', href: '/admin/fraud-alerts', icon: AlertTriangle },
-<<<<<<< HEAD
-    { name: 'Payment Integration Settings', href: '/admin/payment-settings', icon: CreditCard },
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
+    { name: 'Payment Integration Settings', href: '/admin/payment-settings', icon: CreditCard }, // ✅ kept
     { name: 'Global Settings', href: '/admin/settings', icon: Shield },
   ];
 
   const currentNavigation = isAdmin ? adminNavigation : navigation;
 
   const isActive = (path) => {
-    // Use startsWith for parent routes, but exact match for dashboard
-    if (path.endsWith('dashboard')) {
-      return location.pathname === path;
-    }
+    if (path.endsWith('dashboard')) return location.pathname === path;
     return location.pathname.startsWith(path);
   };
 
@@ -156,7 +136,7 @@ const Layout = ({ children }) => {
     <div className="flex h-screen theme-transition" style={{ backgroundColor: 'var(--color-background)' }}>
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out`}
-           style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+        style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
         <div className="flex items-center justify-between h-16 px-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-primary)' }}>
@@ -164,11 +144,7 @@ const Layout = ({ children }) => {
             </div>
             <span className="ml-2 text-xl font-bold" style={{ color: 'var(--color-text)' }}>RTO Reminder</span>
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 rounded-md"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-md" style={{ color: 'var(--color-text-secondary)' }}>
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -181,11 +157,10 @@ const Layout = ({ children }) => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    isActive(item.href)
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
+                  className={`sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${isActive(item.href)
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <Icon className="h-5 w-5 mr-3" />
@@ -206,19 +181,16 @@ const Layout = ({ children }) => {
               </span>
             </div>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
-                  style={{ backgroundColor: 'rgba(var(--color-primary), 0.1)', color: 'var(--color-primary)' }}>
+              style={{ backgroundColor: 'rgba(var(--color-primary), 0.1)', color: 'var(--color-primary)' }}>
               {user?.role?.replace('_', ' ') ?? 'Agent'}
             </span>
           </div>
           <button
             onClick={logout}
             className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-            style={{
-              color: 'var(--color-text)',
-              backgroundColor: 'transparent'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(var(--color-border), 0.5)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+            style={{ color: 'var(--color-text)', backgroundColor: 'transparent' }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = 'rgba(var(--color-border), 0.5)')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = 'transparent')}
           >
             <LogOut className="h-4 w-4 mr-2" />
             Logout
@@ -231,11 +203,7 @@ const Layout = ({ children }) => {
         {/* Header */}
         <header className="shadow-sm" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-md"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-md" style={{ color: 'var(--color-text-secondary)' }}>
               <Menu className="h-6 w-6" />
             </button>
 
@@ -261,22 +229,16 @@ const Layout = ({ children }) => {
 
         {/* Page Content */}
         <main className="flex-1 overflow-auto" style={{ backgroundColor: 'var(--color-background)' }}>
-          <div className="p-4 sm:p-6 lg:p-8">
-            {children}
-          </div>
+          <div className="p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
 
       {/* Overlay for mobile */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       <Chatbot />
-
     </div>
   );
 };

@@ -10,43 +10,35 @@ import Register from './pages/Auth/Register';
 import Landing from './pages/Landing';
 import Features from './pages/Features';
 import Pricing from './pages/Pricing';
-
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Guidance from './pages/Guidance';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
-
 import AdminAgents from './pages/AdminAgents';
 import AdminSettings from './pages/AdminSettings';
-<<<<<<< HEAD
 import PaymentSettings from './pages/admin/PaymentSettings';
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 import AdminAgentDetail from './pages/AdminAgentDetail';
 import AdminMessages from './pages/AdminMessages';
 import AdminNotifications from './pages/AdminNotifications';
 import AdminCustomers from './pages/AdminCustomers';
 import AuditLogs from './pages/AuditLogs';
-
 import FraudAlerts from './pages/FraudAlerts';
 import Customers from './pages/Customers';
 import Reminders from './pages/Reminders';
 import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
-
 import PaymentSuccess from './pages/PaymentSuccess';
-<<<<<<< HEAD
 import PaymentFailed from './pages/PaymentFailed';
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 import Billing from './pages/Billing';
 import MessageLogs from './pages/MessageLogs';
 import Settings from './pages/Settings';
 import ScrollToTop from './components/ScrollToTop';
 import './styles/globals.css';
 import './styles/themes.css';
+
+// ---------------- Protected Routes ---------------- //
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -92,27 +84,18 @@ function PublicRoute({ children }) {
 
 function ProtectedLayout() {
   return (
-    <>
-      <Layout><Outlet /></Layout>
-    </>
+    <Layout>
+      <Outlet />
+    </Layout>
   );
 }
 
 function DashboardRoute() {
   const { isAdmin } = useAuth();
-
-  if (isAdmin) {
-    return <Navigate to="/admin/dashboard" />;
-  }
-
-  return (
-    <>
-      <Layout>
-        <Dashboard />
-      </Layout>
-    </>
-  );
+  return isAdmin ? <Navigate to="/admin/dashboard" /> : <Layout><Dashboard /></Layout>;
 }
+
+// ---------------- Main App ---------------- //
 
 function App() {
   return (
@@ -120,87 +103,94 @@ function App() {
       <ThemeProvider>
         <WalletProvider>
           <Router>
-          <ScrollToTop />
-        <div className="App">
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-            }}
-          />
+            <ScrollToTop />
+            <div className="App">
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#363636',
+                    color: '#fff',
+                  },
+                }}
+              />
 
-          <Routes>
-            <Route path="/login" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/register" element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            } />
-            <Route path="/" element={<Landing />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardRoute />
-              </ProtectedRoute>
-            } />
+              <Routes>
+                {/* Public Routes */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <Login />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <PublicRoute>
+                      <Register />
+                    </PublicRoute>
+                  }
+                />
+                <Route path="/" element={<Landing />} />
+                <Route path="/features" element={<Features />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy" element={<Privacy />} />
 
-            {/* Agent routes with Chatbot */}
-            <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
-              <Route path="/customers" element={<Customers />} />
-              <Route path="/reminders" element={<Reminders />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/message-logs" element={<MessageLogs />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-<<<<<<< HEAD
-              <Route path="/payment-failed" element={<PaymentFailed />} />
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
-              <Route path="/guidance" element={<Guidance />} />
-              <Route path="/support" element={<Support />} />
+                {/* Dashboard */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardRoute />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="/settings" element={<Settings />} />
-            </Route>
+                {/* Agent Routes */}
+                <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
+                  <Route path="/customers" element={<Customers />} />
+                  <Route path="/reminders" element={<Reminders />} />
+                  <Route path="/billing" element={<Billing />} />
+                  <Route path="/message-logs" element={<MessageLogs />} />
+                  <Route path="/payment-success" element={<PaymentSuccess />} />
+                  <Route path="/payment-failed" element={<PaymentFailed />} />
+                  <Route path="/guidance" element={<Guidance />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
 
-            {/* Admin Routes Group */}
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <AdminRoute>
-                  <ProtectedLayout />
-                </AdminRoute>
-              </ProtectedRoute>
-            }>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="agents" element={<AdminAgents />} />
-              <Route path="agents/:id" element={<AdminAgentDetail />} />
-              <Route path="customers" element={<AdminCustomers />} />
-              <Route path="messages" element={<AdminMessages />} />
-              <Route path="notifications" element={<AdminNotifications />} />
-              <Route path="audit-logs" element={<AuditLogs />} />
-
-              <Route path="fraud-alerts" element={<FraudAlerts />} />
-              <Route path="support" element={<AdminSupport />} />
-              <Route path="settings" element={<AdminSettings />} />
-<<<<<<< HEAD
-              <Route path="payment-settings" element={<PaymentSettings />} />
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
-            </Route>
-          </Routes>
-        </div>
-        </Router>
+                {/* Admin Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminRoute>
+                        <ProtectedLayout />
+                      </AdminRoute>
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Navigate to="dashboard" replace />} />
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="agents" element={<AdminAgents />} />
+                  <Route path="agents/:id" element={<AdminAgentDetail />} />
+                  <Route path="customers" element={<AdminCustomers />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                  <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="audit-logs" element={<AuditLogs />} />
+                  <Route path="fraud-alerts" element={<FraudAlerts />} />
+                  <Route path="support" element={<AdminSupport />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                  <Route path="payment-settings" element={<PaymentSettings />} />
+                </Route>
+              </Routes>
+            </div>
+          </Router>
         </WalletProvider>
       </ThemeProvider>
     </AuthProvider>

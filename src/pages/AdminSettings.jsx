@@ -1,9 +1,5 @@
-<<<<<<< HEAD
   import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-=======
-import React, { useState, useEffect } from 'react';
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 import { adminAPI } from '../services/api';
 
 const AdminSettings = () => {
@@ -12,17 +8,13 @@ const AdminSettings = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-<<<<<<< HEAD
   const [agentRole, setAgentRole] = useState('');
   const { user } = useAuth();
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 
   useEffect(() => {
     fetchSettings();
   }, []);
 
-<<<<<<< HEAD
   useEffect(() => {
     const fetchAgentRole = async () => {
       try {
@@ -39,8 +31,6 @@ const AdminSettings = () => {
     }
   }, [user]);
 
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
   const fetchSettings = async () => {
     try {
       setLoading(true);
@@ -69,7 +59,6 @@ const AdminSettings = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleSettingChange = (category, field, value, subCategory = null) => {
     setSettings(prev => {
       const newSettings = { ...prev };
@@ -89,84 +78,10 @@ const AdminSettings = () => {
       }
       return newSettings;
     });
-=======
-  const updateMSG91Settings = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      msg91: {
-        ...prev.msg91,
-        [field]: value
-      }
-    }));
-  };
-
-  const updateMSG91Flow = (flowType, value) => {
-    setSettings(prev => ({
-      ...prev,
-      msg91: {
-        ...prev.msg91,
-        flows: {
-          ...prev.msg91.flows,
-          [flowType]: value
-        }
-      }
-    }));
-  };
-
-  const updatePricing = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      pricing: {
-        ...prev.pricing,
-        [field]: value
-      }
-    }));
-  };
-
-  const updateSystem = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      system: {
-        ...prev.system,
-        [field]: value
-      }
-    }));
-  };
-
-  const updateRazorpay = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      razorpay: {
-        ...prev.razorpay,
-        [field]: value
-      }
-    }));
-  };
-
-  const updateCashfree = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      cashfree: {
-        ...prev.cashfree,
-        [field]: value
-      }
-    }));
-  };
-
-  const updatePaymentGateway = (field, value) => {
-    setSettings(prev => ({
-      ...prev,
-      paymentGateway: {
-        ...prev.paymentGateway,
-        [field]: value
-      }
-    }));
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
   };
 
   if (loading) {
     return (
-<<<<<<< HEAD
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-center items-center h-64">
@@ -190,10 +105,6 @@ const AdminSettings = () => {
             </div>
           </div>
         </div>
-=======
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
       </div>
     );
   }
@@ -209,14 +120,11 @@ const AdminSettings = () => {
             <p className="mt-2 text-sm text-gray-600">
               Manage system-wide settings including MSG91 configuration, pricing, and wallet controls
             </p>
-<<<<<<< HEAD
             {agentRole && (
               <p className="mt-2 text-sm text-gray-600">
                 Logged in as: <span className="font-semibold">{user.email}</span> (<span className="font-semibold">{agentRole}</span>)
               </p>
             )}
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
           </div>
         </div>
 
@@ -253,11 +161,7 @@ const AdminSettings = () => {
                 <input
                   type="password"
                   value={settings?.msg91?.authKey || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('msg91', 'authKey', e.target.value)}
-=======
-                  onChange={(e) => updateMSG91Settings('authKey', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter MSG91 Auth Key"
                   required
@@ -268,11 +172,7 @@ const AdminSettings = () => {
                 <input
                   type="text"
                   value={settings?.msg91?.senderId || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('msg91', 'senderId', e.target.value)}
-=======
-                  onChange={(e) => updateMSG91Settings('senderId', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter Sender ID"
                   required
@@ -288,11 +188,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.drivingLicense || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'drivingLicense', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('drivingLicense', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for Driving License"
                   />
@@ -302,11 +198,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.fitnessCertificate || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'fitnessCertificate', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('fitnessCertificate', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for Fitness Certificate"
                   />
@@ -316,11 +208,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.nocHypothecation || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'nocHypothecation', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('nocHypothecation', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for NOC/Hypothecation"
                   />
@@ -330,11 +218,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.pucCertificate || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'pucCertificate', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('pucCertificate', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for PUC Certificate"
                   />
@@ -344,11 +228,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.roadTax || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'roadTax', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('roadTax', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for Road Tax"
                   />
@@ -358,11 +238,7 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={settings?.msg91?.flows?.vehicleInsurance || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('msg91', 'vehicleInsurance', e.target.value, 'flows')}
-=======
-                    onChange={(e) => updateMSG91Flow('vehicleInsurance', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Flow ID for Vehicle Insurance"
                   />
@@ -384,11 +260,7 @@ const AdminSettings = () => {
                   step="0.01"
                   min="0"
                   value={settings?.pricing?.perMessageCost || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('pricing', 'perMessageCost', parseFloat(e.target.value))}
-=======
-                  onChange={(e) => updatePricing('perMessageCost', parseFloat(e.target.value))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="1.00"
                 />
@@ -397,11 +269,7 @@ const AdminSettings = () => {
                 <label className="block text-sm font-medium text-gray-700">Currency</label>
                 <select
                   value={settings?.pricing?.currency || 'INR'}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('pricing', 'currency', e.target.value)}
-=======
-                  onChange={(e) => updatePricing('currency', e.target.value)}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="INR">INR (Indian Rupee)</option>
@@ -425,17 +293,7 @@ const AdminSettings = () => {
                   min="1"
                   max="1000"
                   value={settings?.wallet?.min_topup_amount || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('wallet', 'min_topup_amount', parseInt(e.target.value))}
-=======
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    wallet: {
-                      ...prev.wallet,
-                      min_topup_amount: parseInt(e.target.value)
-                    }
-                  }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="10"
                 />
@@ -447,17 +305,7 @@ const AdminSettings = () => {
                   min="100"
                   max="50000"
                   value={settings?.wallet?.max_topup_amount || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('wallet', 'max_topup_amount', parseInt(e.target.value))}
-=======
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    wallet: {
-                      ...prev.wallet,
-                      max_topup_amount: parseInt(e.target.value)
-                    }
-                  }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="10000"
                 />
@@ -475,30 +323,10 @@ const AdminSettings = () => {
                       checked={settings?.wallet?.topup_amounts?.includes(amount) || false}
                       onChange={(e) => {
                         const currentAmounts = settings?.wallet?.topup_amounts || [];
-<<<<<<< HEAD
                         const newAmounts = e.target.checked
                           ? [...currentAmounts, amount].sort((a, b) => a - b)
                           : currentAmounts.filter(a => a !== amount);
                         handleSettingChange('wallet', 'topup_amounts', newAmounts);
-=======
-                        if (e.target.checked) {
-                          setSettings(prev => ({
-                            ...prev,
-                            wallet: {
-                              ...prev.wallet,
-                              topup_amounts: [...currentAmounts, amount].sort((a, b) => a - b)
-                            }
-                          }));
-                        } else {
-                          setSettings(prev => ({
-                            ...prev,
-                            wallet: {
-                              ...prev.wallet,
-                              topup_amounts: currentAmounts.filter(a => a !== amount)
-                            }
-                          }));
-                        }
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                       }}
                       className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
@@ -517,17 +345,7 @@ const AdminSettings = () => {
                     min="100"
                     max="100000"
                     value={settings?.wallet?.daily_topup_limit || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('wallet', 'daily_topup_limit', parseInt(e.target.value))}
-=======
-                    onChange={(e) => setSettings(prev => ({
-                      ...prev,
-                      wallet: {
-                        ...prev.wallet,
-                        daily_topup_limit: parseInt(e.target.value)
-                      }
-                    }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="5000"
                   />
@@ -539,17 +357,7 @@ const AdminSettings = () => {
                     min="1000"
                     max="500000"
                     value={settings?.wallet?.monthly_topup_limit || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('wallet', 'monthly_topup_limit', parseInt(e.target.value))}
-=======
-                    onChange={(e) => setSettings(prev => ({
-                      ...prev,
-                      wallet: {
-                        ...prev.wallet,
-                        monthly_topup_limit: parseInt(e.target.value)
-                      }
-                    }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="25000"
                   />
@@ -565,17 +373,7 @@ const AdminSettings = () => {
                     id="auto_topup_enabled"
                     type="checkbox"
                     checked={settings?.wallet?.auto_topup_enabled || false}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('wallet', 'auto_topup_enabled', e.target.checked)}
-=======
-                    onChange={(e) => setSettings(prev => ({
-                      ...prev,
-                      wallet: {
-                        ...prev.wallet,
-                        auto_topup_enabled: e.target.checked
-                      }
-                    }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="auto_topup_enabled" className="ml-2 block text-sm text-gray-900">
@@ -589,17 +387,7 @@ const AdminSettings = () => {
                     min="10"
                     max="1000"
                     value={settings?.wallet?.auto_topup_threshold || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('wallet', 'auto_topup_threshold', parseInt(e.target.value))}
-=======
-                    onChange={(e) => setSettings(prev => ({
-                      ...prev,
-                      wallet: {
-                        ...prev.wallet,
-                        auto_topup_threshold: parseInt(e.target.value)
-                      }
-                    }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="50"
                     disabled={!settings?.wallet?.auto_topup_enabled}
@@ -612,17 +400,7 @@ const AdminSettings = () => {
                     min="100"
                     max="5000"
                     value={settings?.wallet?.auto_topup_amount || ''}
-<<<<<<< HEAD
                     onChange={(e) => handleSettingChange('wallet', 'auto_topup_amount', parseInt(e.target.value))}
-=======
-                    onChange={(e) => setSettings(prev => ({
-                      ...prev,
-                      wallet: {
-                        ...prev.wallet,
-                        auto_topup_amount: parseInt(e.target.value)
-                      }
-                    }))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="500"
                     disabled={!settings?.wallet?.auto_topup_enabled}
@@ -633,11 +411,8 @@ const AdminSettings = () => {
           </div>
         </div>
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
         {/* System Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -650,11 +425,7 @@ const AdminSettings = () => {
                   min="1"
                   max="10"
                   value={settings?.system?.maxRetries || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('system', 'maxRetries', parseInt(e.target.value))}
-=======
-                  onChange={(e) => updateSystem('maxRetries', parseInt(e.target.value))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="3"
                 />
@@ -666,26 +437,15 @@ const AdminSettings = () => {
                   min="1"
                   max="60"
                   value={settings?.system?.schedulerInterval || ''}
-<<<<<<< HEAD
                   onChange={(e) => handleSettingChange('system', 'schedulerInterval', parseInt(e.target.value))}
-=======
-                  onChange={(e) => updateSystem('schedulerInterval', parseInt(e.target.value))}
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="5"
                 />
               </div>
             </div>
           </div>
-<<<<<<< HEAD
         </div>
         </div>
-=======
-          </div>
-        </div>
-
-
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 
         {/* Save Button */}
         <div className="flex justify-end">
@@ -701,8 +461,4 @@ const AdminSettings = () => {
     </div>
   );
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> fe410d0a275d79e68e5e2247dec578586f7d126c
 export default AdminSettings;
