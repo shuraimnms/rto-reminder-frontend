@@ -10,13 +10,8 @@ const PayButton = ({ onBalanceUpdate }) => {
   const [quickAmounts, setQuickAmounts] = useState([100, 500, 1000, 2000, 5000]);
   const { refreshBalance } = useWallet();
 
-  // 🔹 Detect environment
-  const isProduction = window.location.hostname !== 'localhost';
-  const cashfreeMode = isProduction ? 'production' : 'sandbox';
-
   useEffect(() => {
     checkPaymentSettings();
-    ensureSDKInjected();
   }, []);
 
   const checkPaymentSettings = async () => {
@@ -30,27 +25,6 @@ const PayButton = ({ onBalanceUpdate }) => {
     } catch (error) {
       console.error('Failed to fetch payment settings:', error);
     }
-  };
-
-  // ✅ Inject Cashfree SDK if missing
-  const ensureSDKInjected = () => {
-    if (document.querySelector('script[src*="cashfree"]')) return;
-    const script = document.createElement('script');
-    script.src = 'https://sdk.cashfree.com/js/ui/2.0.0/cashfree.prod.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => console.log('✅ Cashfree SDK script loaded');
-    script.onerror = (err) => console.error('❌ Failed to load Cashfree SDK.', err);
-    document.body.appendChild(script);
-  };
-
-  // ✅ Wait until Cashfree SDK is ready
-  const waitForCashfree = async (maxTries = 40, delay = 500) => {
-    for (let i = 1; i <= maxTries; i++) {
-      if (window.Cashfree) return window.Cashfree;
-      await new Promise((res) => setTimeout(res, delay));
-    }
-    throw new Error('⚠️ Cashfree SDK failed to load. Please refresh.');
   };
 
   const handleTopup = async (e) => {
@@ -67,29 +41,10 @@ const PayButton = ({ onBalanceUpdate }) => {
         // 🔹 Step 1: Create payment session from backend
         const response = await payAPI.initiateTopup({ amount: topupAmount });
 
-        if (response.data && response.data.paymentSessionId) {
-          const Cashfree = await waitForCashfree();
-          if (Cashfree && typeof Cashfree.checkout === 'function') {
-            const checkoutOptions = {
-              paymentSessionId: response.data.paymentSessionId,
-              redirectTarget: '_modal',
-            };
-
-            console.log(`🚀 Launching Cashfree Checkout in ${cashfreeMode} mode`);
-            Cashfree.checkout(checkoutOptions, { mode: cashfreeMode }).then((result) => {
-              if (result.error) {
-                console.error('❌ Payment failed:', result.error);
-                toast.error('Payment failed. Please try again.');
-                window.location.href = '/payment-failed';
-              } else {
-                console.log('✅ Payment successful:', result);
-                toast.success('Payment successful!');
-                window.location.href = `/payment-success?order_id=${response.data.orderId}`;
-              }
-            });
-          } else {
-            throw new Error('Cashfree SDK not initialized properly.');
-          }
+        if (response.data && response.data.paymentLink) {
+          // Redirect to Cashfree hosted payment page
+          window.location.href = response.data.paymentLink;
+          return;
         } else {
           throw new Error('Failed to initiate payment session.');
         }
