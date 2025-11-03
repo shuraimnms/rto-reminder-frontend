@@ -7,6 +7,10 @@ import { CreditCard, History, Wallet } from 'lucide-react';
 
 const Billing = () => {
   const { balance, loading: balanceLoading, refreshBalance } = useWallet();
+
+  useEffect(() => {
+    refreshBalance();
+  }, []);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 

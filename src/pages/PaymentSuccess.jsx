@@ -3,11 +3,13 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
+import { useWallet } from '../contexts/WalletContext';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { refreshBalance } = useWallet();
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -34,6 +36,8 @@ const PaymentSuccess = () => {
         }
 
         toast.success('Payment successful! Credits have been added to your wallet.');
+        // Refresh wallet balance after successful payment verification
+        refreshBalance();
       } catch (error) {
         toast.error('Payment verification failed. Please contact support if credits were not added.');
       } finally {
