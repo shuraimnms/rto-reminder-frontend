@@ -14,31 +14,21 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        const transactionId = searchParams.get('transaction_id');
-        const paymentId = searchParams.get('payment_id');
-
-        if (transactionId) {
-          // Verify payment with backend
-          const response = await api.get(`/api/v1/pay/verify-payment/${transactionId}`);
-          setPaymentDetails(response.data.data);
-        } else if (paymentId) {
-          // Handle direct payment gateway callback
-          setPaymentDetails({
-            amount: searchParams.get('amount'),
-            currency: 'INR',
-            status: 'success'
-          });
-        } else if (searchParams.get('order_id')) {
-          // Handle Cashfree redirect with order_id
-          const orderId = searchParams.get('order_id');
-          const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`);
-          setPaymentDetails(response.data.data);
+        const orderId = searchParams.get('order_id');
+        if (!orderId) {
+          throw new Error('Order ID not found in redirect URL');
         }
-
+        // Call backend to verify and credit
+        const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`);
+        if (!response.data.success) {
+          throw new Error(response.data.message || 'Verification failed');
+        }
+        const data = response.data.data;
+        setPaymentDetails(data);
         toast.success('Payment successful! Credits have been added to your wallet.');
-        // Refresh wallet balance after successful payment verification
         refreshBalance();
       } catch (error) {
+        console.error('Payment verification error:', error);
         toast.error('Payment verification failed. Please contact support if credits were not added.');
       } finally {
         setLoading(false);
@@ -46,7 +36,7 @@ const PaymentSuccess = () => {
     };
 
     verifyPayment();
-  }, [searchParams]);
+  }, [searchParams, refreshBalance]);
 
   if (loading) {
     return (
@@ -69,30 +59,20 @@ const PaymentSuccess = () => {
               Payment Successful!
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Your credits have been added to your wallet successfully.
+              {paymentDetails ? `₹${paymentDetails.amount.toFixed(2)} has been credited.` : 'Your credits have been added to your wallet.'}
             </p>
           </div>
 
-          {paymentDetails && (
+          { paymentDetails && (
             <div className="mt-8 border-t border-gray-200 pt-6">
               <dl className="space-y-4">
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Amount Added</dt>
-                  <dd className="text-sm font-medium text-gray-900">
-                    ₹{paymentDetails.amount?.toFixed(2)}
-                  </dd>
+                  <dd className="text-sm font-medium text-gray-900">₹{paymentDetails.amount.toFixed(2)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-sm font-medium text-gray-500">Transaction ID</dt>
-                  <dd className="text-sm font-medium text-gray-900">
-                    {paymentDetails.transaction_id || searchParams.get('transaction_id') || 'N/A'}
-                  </dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-sm font-medium text-gray-500">Payment ID</dt>
-                  <dd className="text-sm font-medium text-gray-900">
-                    {paymentDetails.payment_id || searchParams.get('payment_id') || 'N/A'}
-                  </dd>
+                  <dt className="text-sm font-medium text-gray-500">Order ID</dt>
+                  <dd className="text-sm font-medium text-gray-900">{paymentDetails.orderId}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -103,16 +83,10 @@ const PaymentSuccess = () => {
           )}
 
           <div className="mt-8 space-y-4">
-            <Link
-              to="/billing"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
+            <Link to="/billing" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
               View Billing Details
             </Link>
-            <Link
-              to="/dashboard"
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
+            <Link to="/dashboard" className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
               Go to Dashboard
             </Link>
           </div>
@@ -123,4 +97,3 @@ const PaymentSuccess = () => {
 };
 
 export default PaymentSuccess;
-
