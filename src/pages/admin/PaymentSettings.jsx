@@ -120,20 +120,53 @@ const PaymentSettings = () => {
         <div className="mt-8">
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Cashfree Payment Gateway</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Integration Settings</h3>
 
-              {/* Enable/Disable Toggle */}
+              {/* Payment Integration Toggle */}
               <div className="mb-6">
                 <div className="flex items-center">
                   <input
-                    id="payment_enabled"
+                    id="payment_integration_enabled"
+                    type="checkbox"
+                    checked={settings?.paymentIntegration?.enabled || false}
+                    onChange={(e) => handleSettingChange('paymentIntegration', 'enabled', e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="payment_integration_enabled" className="ml-2 block text-sm text-gray-900">
+                    Enable Payment Integration
+                  </label>
+                </div>
+              </div>
+
+              {/* Environment Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700">Environment</label>
+                <select
+                  value={settings?.paymentIntegration?.environment || 'sandbox'}
+                  onChange={(e) => handleSettingChange('paymentIntegration', 'environment', e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  disabled={!settings?.paymentIntegration?.enabled}
+                >
+                  <option value="sandbox">Sandbox</option>
+                  <option value="production">Production</option>
+                </select>
+              </div>
+
+              <h4 className="text-md font-medium text-gray-900 mb-4">Cashfree Payment Gateway</h4>
+
+              {/* Cashfree Enable/Disable Toggle */}
+              <div className="mb-6">
+                <div className="flex items-center">
+                  <input
+                    id="cashfree_enabled"
                     type="checkbox"
                     checked={settings?.cashfree?.enabled || false}
                     onChange={(e) => handleSettingChange('cashfree', 'enabled', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    disabled={!settings?.paymentIntegration?.enabled}
                   />
-                  <label htmlFor="payment_enabled" className="ml-2 block text-sm text-gray-900">
-                    Enable Payment Integration
+                  <label htmlFor="cashfree_enabled" className="ml-2 block text-sm text-gray-900">
+                    Enable Cashfree Gateway
                   </label>
                 </div>
               </div>
