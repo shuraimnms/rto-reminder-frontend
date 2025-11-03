@@ -26,6 +26,11 @@ const PaymentSuccess = () => {
             currency: 'INR',
             status: 'success'
           });
+        } else if (searchParams.get('order_id')) {
+          // Handle Cashfree redirect with order_id
+          const orderId = searchParams.get('order_id');
+          const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`);
+          setPaymentDetails(response.data.data);
         }
 
         toast.success('Payment successful! Credits have been added to your wallet.');

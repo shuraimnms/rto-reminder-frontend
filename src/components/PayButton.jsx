@@ -47,7 +47,7 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
 
     // Initialise the SDK instance (sandbox for testing)
-    const cashfree = window.Cashfree({ mode: 'production' }); // switch to 'production' when live
+    const cashfree = window.Cashfree({ mode: 'sandbox' }); // switch to 'production' when live
     console.log('✅ Cashfree SDK initialised:', cashfree);
     return cashfree;
   };
@@ -72,7 +72,7 @@ const PayButton = ({ onBalanceUpdate }) => {
           const checkoutOptions = {
             paymentSessionId: response.data.paymentSessionId,
             redirectTarget: '_self', // or '_blank', depending on flow
-            returnUrl: `https://yourdomain.com/payment-success?order_id=${response.data.orderId}`,
+            returnUrl: `https://rtoagent.netlify.app/payment-success?order_id=${response.data.orderId}`,
             // you can add more options if required
           };
 
