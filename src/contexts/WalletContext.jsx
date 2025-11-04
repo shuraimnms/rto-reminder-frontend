@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { payAPI } from '../services/api';
 
 const WalletContext = createContext();
@@ -36,9 +36,9 @@ export const WalletProvider = ({ children }) => {
     fetchBalance();
   }, []);
 
-  const refreshBalance = () => {
+  const refreshBalance = useCallback(() => {
     fetchBalance();
-  };
+  }, []); // Dependencies for fetchBalance are not needed here as fetchBalance itself doesn't depend on props/state that change frequently
 
   const value = {
     balance,

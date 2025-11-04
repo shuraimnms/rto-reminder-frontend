@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -125,7 +125,7 @@ export function AuthProvider({ children }) {
     setUser(prevUser => ({ ...prevUser, ...updatedUserData }));
   };
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
       const response = await authAPI.getMe();
       const { agent } = response.data;
@@ -134,7 +134,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error('Failed to refresh user data:', error);
     }
-  };
+  }, [setUser, setIsAdmin]); // setUser and setIsAdmin are stable, so this effectively memoizes refreshUser
 
   const value = {
     user,
