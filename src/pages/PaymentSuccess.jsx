@@ -10,12 +10,19 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasVerified, setHasVerified] = useState(false); // New state to prevent multiple verifications
   const { refreshBalance } = useWallet();
   const { refreshUser } = useAuth();
 
   useEffect(() => {
     const verifyPayment = async () => {
       const orderId = searchParams.get('order_id') || searchParams.get('orderId');
+
+      if (hasVerified) { // Prevent re-verification if already done
+        console.log('ℹ️ Payment already verified or verification in progress for this session.');
+        setLoading(false);
+        return;
+      }
 
       if (!orderId) {
         console.error('❌ No order_id found in URL parameters');
@@ -66,6 +73,7 @@ const PaymentSuccess = () => {
         // 🔄 Refresh wallet & user info
         await Promise.all([refreshBalance(), refreshUser()]);
         console.log('🔁 Wallet and user data refreshed after payment.');
+        setHasVerified(true); // Mark as verified after successful payment
       } catch (error) {
         console.error('❌ Payment verification error:', {
           message: error.message,
