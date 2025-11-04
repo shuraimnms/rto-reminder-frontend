@@ -38,18 +38,26 @@ const PaymentSuccess = () => {
 
       try {
         // 🔥 Verify payment with backend
-        const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`, {
+        const response = await fetch(`${api}/api/v1/pay/verify-payment/${orderId}`, {
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        if (!response.data.success) {
-          throw new Error(response.data.message || 'Payment verification failed');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
         }
 
-        const data = response.data.data;
+        const responseData = await response.json();
+
+        if (!responseData.success) {
+          throw new Error(responseData.message || 'Payment verification failed');
+        }
+
+        const data = responseData.data;
         console.log('✅ Payment verification successful:', data);
 
         setPaymentDetails(data);

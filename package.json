@@ -22,7 +22,8 @@
     "react-hot-toast": "^2.4.0",
     "react-router-dom": "^6.8.0",
     "react-toastify": "^11.0.5",
-    "recharts": "^2.5.0"
+    "recharts": "^2.5.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
