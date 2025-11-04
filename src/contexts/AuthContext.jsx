@@ -125,6 +125,17 @@ export function AuthProvider({ children }) {
     setUser(prevUser => ({ ...prevUser, ...updatedUserData }));
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await authAPI.getMe();
+      const { agent } = response.data;
+      setUser(agent);
+      setIsAdmin(agent.role === 'admin' || agent.role === 'super_admin');
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+    }
+  };
+
   const value = {
     user,
     isAdmin,
@@ -133,7 +144,8 @@ export function AuthProvider({ children }) {
     logout,
     loading,
     authChecked,
-    updateUser // Expose the updateUser function
+    updateUser, // Expose the updateUser function
+    refreshUser
   };
 
   return (

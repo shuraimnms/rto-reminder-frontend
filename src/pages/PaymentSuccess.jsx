@@ -4,39 +4,79 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
 import { useWallet } from '../contexts/WalletContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const { refreshBalance } = useWallet();
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
     const verifyPayment = async () => {
+      const orderId = searchParams.get('order_id') || searchParams.get('orderId');
+
+      if (!orderId) {
+        console.error('❌ No order_id found in URL parameters');
+        toast.error('Invalid payment URL — order ID missing.');
+        setLoading(false);
+        return;
+      }
+
+      console.log('🔍 Verifying payment for order:', orderId);
+
+      // ✅ Restore user token after redirect
+      const token = localStorage.getItem('authToken');
+
+      if (!token) {
+        console.warn('⚠️ No token found — user must log in again.');
+        toast.error('Please log in again to verify your payment.');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const orderId = searchParams.get('order_id');
-        if (!orderId) {
-          throw new Error('Order ID not found in redirect URL');
-        }
-        // Call backend to verify and credit
-        const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`);
+        // 🔥 Verify payment with backend
+        const response = await api.get(`/api/v1/pay/verify-payment/${orderId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
         if (!response.data.success) {
-          throw new Error(response.data.message || 'Verification failed');
+          throw new Error(response.data.message || 'Payment verification failed');
         }
+
         const data = response.data.data;
+        console.log('✅ Payment verification successful:', data);
+
         setPaymentDetails(data);
         toast.success('Payment successful! Credits have been added to your wallet.');
-        refreshBalance();
+
+        // 🔄 Refresh wallet & user info
+        await Promise.all([refreshBalance(), refreshUser()]);
+        console.log('🔁 Wallet and user data refreshed after payment.');
       } catch (error) {
-        console.error('Payment verification error:', error);
-        toast.error('Payment verification failed. Please contact support if credits were not added.');
+        console.error('❌ Payment verification error:', {
+          message: error.message,
+          stack: error.stack,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+
+        toast.error(
+          error.response?.data?.message ||
+            'Payment verification failed. Please contact support if balance not added.'
+        );
       } finally {
         setLoading(false);
       }
     };
 
     verifyPayment();
-  }, [searchParams, refreshBalance]);
+  }, [searchParams, refreshBalance, refreshUser]);
 
   if (loading) {
     return (
@@ -59,20 +99,24 @@ const PaymentSuccess = () => {
               Payment Successful!
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              {paymentDetails ? `₹${paymentDetails.amount.toFixed(2)} has been credited.` : 'Your credits have been added to your wallet.'}
+              Your credits have been added to your wallet successfully.
             </p>
           </div>
 
-          { paymentDetails && (
+          {paymentDetails && (
             <div className="mt-8 border-t border-gray-200 pt-6">
               <dl className="space-y-4">
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Amount Added</dt>
-                  <dd className="text-sm font-medium text-gray-900">₹{paymentDetails.amount.toFixed(2)}</dd>
+                  <dd className="text-sm font-medium text-gray-900">
+                    ₹{Number(paymentDetails.amount || 0).toFixed(2)}
+                  </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Order ID</dt>
-                  <dd className="text-sm font-medium text-gray-900">{paymentDetails.orderId}</dd>
+                  <dd className="text-sm font-medium text-gray-900">
+                    {paymentDetails.orderId || searchParams.get('order_id')}
+                  </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -83,10 +127,16 @@ const PaymentSuccess = () => {
           )}
 
           <div className="mt-8 space-y-4">
-            <Link to="/billing" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+            <Link
+              to="/billing"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
               View Billing Details
             </Link>
-            <Link to="/dashboard" className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <Link
+              to="/dashboard"
+              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
               Go to Dashboard
             </Link>
           </div>
