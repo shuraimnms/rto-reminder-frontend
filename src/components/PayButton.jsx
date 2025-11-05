@@ -47,7 +47,7 @@ const PayButton = ({ onBalanceUpdate }) => {
     }
 
     // Initialise the SDK instance (sandbox for testing)
-    const cashfree = window.Cashfree({ mode: 'sandbox' }); // switch to 'production' when live
+    const cashfree = window.Cashfree({ mode: 'production' }); // switch to 'production' when live
     console.log('✅ Cashfree SDK initialised:', cashfree);
     return cashfree;
   };
