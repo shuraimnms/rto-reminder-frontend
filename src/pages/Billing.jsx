@@ -7,10 +7,10 @@ import { CreditCard, History, Wallet } from 'lucide-react';
 
 const Billing = () => {
   const { balance, loading: balanceLoading, refreshBalance } = useWallet();
+  console.log('Billing component - Current Balance from WalletContext:', balance); // Debugging line
 
-  useEffect(() => {
-    refreshBalance();
-  }, []);
+  // Removed useEffect for refreshBalance as WalletProvider already fetches on mount
+  // and setWalletBalance directly updates the balance.
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 

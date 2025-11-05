@@ -40,10 +40,15 @@ export const WalletProvider = ({ children }) => {
     fetchBalance();
   }, []); // Dependencies for fetchBalance are not needed here as fetchBalance itself doesn't depend on props/state that change frequently
 
+  const setWalletBalance = useCallback((newBalance) => {
+    setBalance(newBalance);
+  }, []);
+
   const value = {
     balance,
     loading,
     refreshBalance,
+    setWalletBalance, // Expose the new function
   };
 
   return (

@@ -11,7 +11,7 @@ const PaymentSuccess = () => {
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasVerified, setHasVerified] = useState(false); // New state to prevent multiple verifications
-  const { refreshBalance } = useWallet();
+  const { refreshBalance, setWalletBalance } = useWallet(); // Import setWalletBalance
   const { refreshUser } = useAuth();
 
   useEffect(() => {
@@ -70,8 +70,9 @@ const PaymentSuccess = () => {
         setPaymentDetails(data);
         toast.success('Payment successful! Credits have been added to your wallet.');
 
-        // 🔄 Refresh wallet & user info
-        await Promise.all([refreshBalance(), refreshUser()]);
+        // 🔄 Update wallet balance directly and refresh user info
+        setWalletBalance(data.balance_after); // Directly update wallet balance
+        await refreshUser(); // Refresh user info
         console.log('🔁 Wallet and user data refreshed after payment.');
         setHasVerified(true); // Mark as verified after successful payment
       } catch (error) {
