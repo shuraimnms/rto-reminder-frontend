@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 
 const Settings = () => {
   const { user, updateUser } = useAuth();
+  const { currentTheme } = useTheme();
+  const isAiTheme = currentTheme === 'ai';
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({
     profile: {
@@ -126,10 +128,10 @@ const Settings = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className={isAiTheme ? "text-2xl font-bold text-ai-text-bright" : "text-2xl font-bold text-gray-900"}>Settings</h1>
         <button
           onClick={fetchSettings}
-          className="btn btn-secondary flex items-center"
+          className={isAiTheme ? "btn-ai-secondary flex items-center" : "btn btn-secondary flex items-center"}
         >
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
@@ -137,7 +139,7 @@ const Settings = () => {
       </div>
 
       {/* Profile Settings */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <User className="h-5 w-5 text-gray-400 mr-2" />
@@ -158,7 +160,7 @@ const Settings = () => {
                   ...prev,
                   profile: { ...prev.profile, name: e.target.value }
                 }))}
-                className="input w-full"
+                className={isAiTheme ? "input-ai w-full" : "input w-full"}
                 required
               />
             </div>
@@ -174,7 +176,7 @@ const Settings = () => {
                   ...prev,
                   profile: { ...prev.profile, email: e.target.value }
                 }))}
-                className="input w-full"
+                className={isAiTheme ? "input-ai w-full" : "input w-full"}
                 required
               />
             </div>
@@ -190,7 +192,7 @@ const Settings = () => {
                   ...prev,
                   profile: { ...prev.profile, mobile: e.target.value }
                 }))}
-                className="input w-full"
+                className={isAiTheme ? "input-ai w-full" : "input w-full"}
                 required
               />
             </div>
@@ -206,7 +208,7 @@ const Settings = () => {
                   ...prev,
                   profile: { ...prev.profile, company_name: e.target.value }
                 }))}
-                className="input w-full"
+                className={isAiTheme ? "input-ai w-full" : "input w-full"}
               />
             </div>
           </div>
@@ -214,7 +216,7 @@ const Settings = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="btn btn-primary flex items-center"
+              className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
               disabled={loading}
             >
               {loading ? (
@@ -229,7 +231,7 @@ const Settings = () => {
       </div>
 
       {/* Notification Settings */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Bell className="h-5 w-5 text-gray-400 mr-2" />
@@ -299,7 +301,7 @@ const Settings = () => {
                   ...prev,
                   notifications: { ...prev.notifications, low_balance_threshold: parseFloat(e.target.value) || 0 }
                 }))}
-                className="input w-full max-w-xs"
+                className={isAiTheme ? "input-ai w-full max-w-xs" : "input w-full max-w-xs"}
               />
             </div>
 
@@ -334,7 +336,7 @@ const Settings = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="btn btn-primary flex items-center"
+              className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
               disabled={loading}
             >
               {loading ? (
@@ -349,7 +351,7 @@ const Settings = () => {
       </div>
 
       {/* Appearance Settings */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Palette className="h-5 w-5 text-gray-400 mr-2" />
@@ -369,7 +371,7 @@ const Settings = () => {
       </div>
 
       {/* Security Settings */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Shield className="h-5 w-5 text-gray-400 mr-2" />
@@ -393,7 +395,7 @@ const Settings = () => {
                   <input
                     type="password"
                     name="currentPassword"
-                    className="input w-full"
+                    className={isAiTheme ? "input-ai w-full" : "input w-full"}
                     required
                   />
                 </div>
@@ -405,7 +407,7 @@ const Settings = () => {
                   <input
                     type="password"
                     name="newPassword"
-                    className="input w-full"
+                    className={isAiTheme ? "input-ai w-full" : "input w-full"}
                     required
                     minLength="6"
                   />
@@ -418,7 +420,7 @@ const Settings = () => {
                   <input
                     type="password"
                     name="confirmPassword"
-                    className="input w-full"
+                    className={isAiTheme ? "input-ai w-full" : "input w-full"}
                     required
                     minLength="6"
                   />
@@ -428,7 +430,7 @@ const Settings = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="btn btn-primary flex items-center"
+                  className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
                   disabled={loading}
                 >
                   {loading ? (
@@ -457,7 +459,7 @@ const Settings = () => {
                   }));
                   handleSecurityUpdate({ preventDefault: () => {} });
                 }}
-                className={`btn ${settings.security.two_factor_enabled ? 'btn-secondary' : 'btn-primary'}`}
+                className={isAiTheme ? `btn ${settings.security.two_factor_enabled ? 'btn-ai-secondary' : 'btn-ai-primary'}` : `btn ${settings.security.two_factor_enabled ? 'btn-secondary' : 'btn-primary'}`}
                 disabled={loading}
               >
                 {settings.security.two_factor_enabled ? 'Disable' : 'Enable'}
@@ -477,7 +479,7 @@ const Settings = () => {
                   ...prev,
                   security: { ...prev.security, session_timeout: parseInt(e.target.value) }
                 }))}
-                className="input w-full max-w-xs"
+                className={isAiTheme ? "input-ai w-full max-w-xs" : "input w-full max-w-xs"}
               >
                 <option value={1}>1 hour</option>
                 <option value={4}>4 hours</option>
@@ -489,7 +491,7 @@ const Settings = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={handleSecurityUpdate}
-                className="btn btn-primary flex items-center"
+                className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
                 disabled={loading}
               >
                 {loading ? (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bell, Plus, Search, Edit, Trash2, Play, Pause, Send, Calendar, Car, User } from 'lucide-react';
 import { remindersAPI, customersAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import CreateReminderModal from '../components/modals/CreateReminderModal';
 import toast from 'react-hot-toast';
 
@@ -18,6 +19,8 @@ const Reminders = () => {
   });
   const [filter, setFilter] = useState('all'); // all, pending, sent, completed, failed
   const { user } = useAuth();
+  const { currentTheme } = useTheme();
+  const isAiTheme = currentTheme === 'ai';
 
   useEffect(() => {
     fetchReminders();
@@ -134,10 +137,10 @@ const Reminders = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Reminders</h1>
+        <h1 className={isAiTheme ? "text-2xl font-bold text-ai-text-bright" : "text-2xl font-bold text-gray-900"}>Reminders</h1>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="btn btn-primary flex items-center"
+          className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
         >
           <Plus className="h-4 w-4 mr-2" />
           Create Reminder
@@ -145,7 +148,7 @@ const Reminders = () => {
       </div>
 
       {/* Filters and Search */}
-      <div className="card p-4">
+      <div className={isAiTheme ? "card-ai p-4" : "card p-4"}>
         <div className="flex flex-col sm:flex-row gap-4">
           <form onSubmit={handleSearch} className="flex-1 flex gap-4">
             <div className="flex-1 relative">
@@ -154,11 +157,11 @@ const Reminders = () => {
                 placeholder="Search by customer name, vehicle, or reminder type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10 w-full"
+                className={isAiTheme ? "input-ai pl-10 w-full" : "input pl-10 w-full"}
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             </div>
-            <button type="submit" className="btn btn-secondary">
+            <button type="submit" className={isAiTheme ? "btn-ai-secondary" : "btn btn-secondary"}>
               Search
             </button>
           </form>
@@ -169,7 +172,7 @@ const Reminders = () => {
               setFilter(e.target.value);
               setPagination(prev => ({ ...prev, page: 1 }));
             }}
-            className="input"
+            className={isAiTheme ? "input-ai" : "input"}
           >
             <option value="all">All Status</option>
             <option value="PENDING">Pending</option>
@@ -184,7 +187,7 @@ const Reminders = () => {
       </div>
 
       {/* Reminders Table */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">
             Reminders List ({pagination.total})
@@ -216,31 +219,31 @@ const Reminders = () => {
           <>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className={isAiTheme ? "bg-ai-graphite" : "bg-gray-50"}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Reminder Type
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Expiry Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Next Send
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={isAiTheme ? "bg-ai-carbon divide-y divide-ai-graphite" : "bg-white divide-y divide-gray-200"}>
                   {reminders.map((reminder) => (
-                    <tr key={reminder._id} className="hover:bg-gray-50">
+                    <tr key={reminder._id} className={isAiTheme ? "hover:bg-ai-graphite" : "hover:bg-gray-50"}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">

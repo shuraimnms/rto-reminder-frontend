@@ -1,6 +1,7 @@
 ﻿﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { remindersAPI } from '../services/api';
 import { demoStats } from '../utils/demoData';
 import PayButton from '../components/PayButton';
@@ -16,18 +17,29 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const StatCard = ({ title, value, icon: Icon, color, subtitle }) => (
-  <div className="card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <div className="flex items-center">
-      <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="h-6 w-6 text-white" />
+const StatCard = ({ title, value, icon: Icon, color, subtitle, isAiTheme }) => (
+  <div className={isAiTheme ? "stat-pod hover-lift" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
+    {isAiTheme ? (
+      <>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-ai-text-dim">{title}</p>
+          <Icon className="h-6 w-6 text-ai-neural-blue" />
+        </div>
+        <p className="stat-value mt-2">{value}</p>
+        {subtitle && <p className="text-xs text-ai-text-ghost mt-1">{subtitle}</p>}
+      </>
+    ) : (
+      <div className="flex items-center">
+        <div className={`p-3 rounded-lg ${color}`}>
+          <Icon className="h-6 w-6 text-white" />
+        </div>
+        <div className="ml-4">
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+        </div>
       </div>
-      <div className="ml-4">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
-        {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
-      </div>
-    </div>
+    )}
   </div>
 );
 
@@ -36,6 +48,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [demoMode, setDemoMode] = useState(false);
   const { user, logout, authChecked } = useAuth();
+  const { currentTheme } = useTheme();
+  const isAiTheme = currentTheme === 'ai';
 
   useEffect(() => {
     if (authChecked && user) {
@@ -92,7 +106,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+      <div className={isAiTheme ? "card-ai holographic p-6" : "bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"}>
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold">Welcome back, {user?.name}! 👋</h1>
@@ -119,7 +133,7 @@ const Dashboard = () => {
 
       {/* Low Balance Alert */}
       {user?.wallet_balance < 50 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className={isAiTheme ? "card-ai p-4 lightning-border" : "bg-yellow-50 border border-yellow-200 rounded-lg p-4"}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mr-3" />
@@ -130,12 +144,12 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-            <Link
-              to="/billing"
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Top Up Now
-            </Link>
+              <Link
+                to="/billing"
+                className={isAiTheme ? "btn-ai-danger px-4 py-2 rounded-lg text-sm font-medium" : "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"}
+              >
+                Top Up Now
+              </Link>
           </div>
         </div>
       )}
@@ -147,19 +161,22 @@ const Dashboard = () => {
           value={overview.total_customers}
           icon={Users}
           color="bg-blue-500"
+          isAiTheme={isAiTheme}
         />
         <StatCard
           title="Active Reminders"
           value={overview.total_reminders}
           icon={Bell}
           color="bg-green-500"
+          isAiTheme={isAiTheme}
         />
         <StatCard
           title="Wallet Balance"
           value={`₹${overview.wallet_balance}`}
           icon={Wallet}
           color={user?.wallet_balance < 50 ? "bg-red-500" : "bg-purple-500"}
-          subtitle={<span className="font-bold text-blue-600">₹{overview.per_message_cost} per message (Realtime)</span>}
+          subtitle={<span className={isAiTheme ? "text-ai-electric-cyan" : "font-bold text-blue-600"}>₹{overview.per_message_cost} per message (Realtime)</span>}
+          isAiTheme={isAiTheme}
         />
         <StatCard
           title="Delivery Rate"
@@ -167,12 +184,13 @@ const Dashboard = () => {
           icon={TrendingUp}
           color="bg-orange-500"
           subtitle="Last 30 days"
+          isAiTheme={isAiTheme}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming Reminders */}
-        <div className="card bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className={isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
           <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Upcoming Reminders</h2>
@@ -218,7 +236,7 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Messages */}
-        <div className="card bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className={isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
           <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Recent Messages</h2>
@@ -279,31 +297,31 @@ const Dashboard = () => {
 
 
       {/* Quick Actions */}
-      <div className="card p-6">
+      <div className={isAiTheme ? "card-ai p-6" : "card p-6"}>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 theme-dark:text-white">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/customers?action=create"
-            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
             <Users className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
             <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Add Customer</p>
           </Link>
           <Link
             to="/reminders?action=create"
-            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
             <Bell className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
             <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Create Reminder</p>
           </Link>
           <Link
             to="/reminders?action=test"
-            className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"
+            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
             <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
             <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Test Message</p>
           </Link>
-          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300">
+          <div className={isAiTheme ? "btn-ai-primary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}>
             <PayButton onBalanceUpdate={loadDashboardData} />
           </div>
         </div>

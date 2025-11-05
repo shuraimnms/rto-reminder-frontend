@@ -72,7 +72,7 @@ const PayButton = ({ onBalanceUpdate }) => {
           const checkoutOptions = {
             paymentSessionId: response.data.paymentSessionId,
             redirectTarget: '_self', // or '_blank', depending on flow
-            returnUrl: `https://rtoagent.netlify.app/payment-success?order_id=${response.data.orderId}`,
+            returnUrl: `https://rtoagent.netlify.app/payment-status-check?order_id=${response.data.orderId}`,
             // you can add more options if required
           };
 
@@ -82,7 +82,7 @@ const PayButton = ({ onBalanceUpdate }) => {
               if (result.error) {
                 console.error('Payment failed:', result.error);
                 toast.error('Payment failed. Please try again.');
-                window.location.href = '/payment-failed';
+                // Redirection is now handled by PaymentStatusCheck.jsx
               } else if (result.redirect) {
                 console.log('Redirecting to checkout...');
                 // Flow continues via redirect

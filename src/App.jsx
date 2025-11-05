@@ -31,12 +31,14 @@ import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
+import PaymentStatusCheck from './pages/PaymentStatusCheck'; // Added import
 import Billing from './pages/Billing';
 import MessageLogs from './pages/MessageLogs';
 import Settings from './pages/Settings';
 import ScrollToTop from './components/ScrollToTop';
 import './styles/globals.css';
 import './styles/themes.css';
+import './styles/ai-theme.css';
 
 // ---------------- Protected Routes ---------------- //
 
@@ -159,6 +161,7 @@ function App() {
                   <Route path="/message-logs" element={<MessageLogs />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-failed" element={<PaymentFailed />} />
+                  <Route path="/payment-status-check" element={<PaymentStatusCheck />} /> {/* Added route */}
                   <Route path="/guidance" element={<Guidance />} />
                   <Route path="/support" element={<Support />} />
                   <Route path="/settings" element={<Settings />} />

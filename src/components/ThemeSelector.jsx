@@ -26,6 +26,16 @@ const ThemeSelector = () => {
         secondary: '#64748B',
         background: '#F0FDFA'
       }
+    },
+    {
+      key: 'ai',
+      name: 'Neural Intelligence',
+      description: 'Futuristic AI-inspired interface',
+      preview: {
+        primary: '#00D9FF',
+        secondary: '#8B5CF6',
+        background: '#0A0E27'
+      }
     }
   ];
 

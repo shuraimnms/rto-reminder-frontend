@@ -5,10 +5,15 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth; /* Enable smooth scrolling for anchor links */
   }
   
   body {
     @apply bg-gray-50 text-gray-900;
+    -webkit-overflow-scrolling: touch; /* Improve scrolling performance on iOS */
+    will-change: scroll-position; /* Hint to browsers for performance optimization */
+    overflow-anchor: none; /* Prevent scroll jumps */
+    overscroll-behavior: contain; /* Prevent scroll chaining */
   }
 }
 

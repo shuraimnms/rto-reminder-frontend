@@ -1,110 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
-import api from '../services/api';
-import { useWallet } from '../contexts/WalletContext';
-import { useAuth } from '../contexts/AuthContext';
 
 const PaymentSuccess = () => {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [paymentDetails, setPaymentDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [hasVerified, setHasVerified] = useState(false); // New state to prevent multiple verifications
-  const { refreshBalance, setWalletBalance } = useWallet(); // Import setWalletBalance
-  const { refreshUser } = useAuth();
 
   useEffect(() => {
-    const verifyPayment = async () => {
-      const orderId = searchParams.get('order_id') || searchParams.get('orderId');
+    // Payment details should be passed via navigation state from PaymentStatusCheck
+    if (location.state && location.state.paymentDetails) {
+      setPaymentDetails(location.state.paymentDetails);
+      toast.success('Payment successful! Credits have been added to your wallet.');
+    } else {
+      // Fallback if no state is passed (e.g., direct access or refresh)
+      toast.error('Payment details not found. Please check your billing history.');
+    }
+  }, [location]);
 
-      if (hasVerified) { // Prevent re-verification if already done
-        console.log('ℹ️ Payment already verified or verification in progress for this session.');
-        setLoading(false);
-        return;
-      }
-
-      if (!orderId) {
-        console.error('❌ No order_id found in URL parameters');
-        toast.error('Invalid payment URL — order ID missing.');
-        setLoading(false);
-        return;
-      }
-
-      console.log('🔍 Verifying payment for order:', orderId);
-
-      // ✅ Restore user token after redirect
-      const token = localStorage.getItem('authToken');
-
-      if (!token) {
-        console.warn('⚠️ No token found — user must log in again.');
-        toast.error('Please log in again to verify your payment.');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // 🔥 Verify payment with backend
-        const response = await fetch(`${api}/api/v1/pay/verify-payment/${orderId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-
-        if (!responseData.success) {
-          throw new Error(responseData.message || 'Payment verification failed');
-        }
-
-        const data = responseData.data;
-        console.log('✅ Payment verification successful:', data);
-
-        setPaymentDetails(data);
-        toast.success('Payment successful! Credits have been added to your wallet.');
-
-        // 🔄 Update wallet balance directly and refresh user info
-        setWalletBalance(data.balance_after); // Directly update wallet balance
-        await refreshUser(); // Refresh user info
-        console.log('🔁 Wallet and user data refreshed after payment.');
-        setHasVerified(true); // Mark as verified after successful payment
-      } catch (error) {
-        console.error('❌ Payment verification error:', {
-          message: error.message,
-          stack: error.stack,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-
-        toast.error(
-          error.response?.data?.message ||
-            'Payment verification failed. Please contact support if balance not added.'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyPayment();
-  }, [searchParams, refreshBalance, refreshUser]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600">Verifying payment...</p>
-        </div>
-      </div>
-    );
-  }
+  // No loading state needed as verification is done by PaymentStatusCheck
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -132,7 +46,7 @@ const PaymentSuccess = () => {
                 <div className="flex justify-between">
                   <dt className="text-sm font-medium text-gray-500">Order ID</dt>
                   <dd className="text-sm font-medium text-gray-900">
-                    {paymentDetails.orderId || searchParams.get('order_id')}
+                    {paymentDetails.orderId}
                   </dd>
                 </div>
                 <div className="flex justify-between">
@@ -162,5 +76,6 @@ const PaymentSuccess = () => {
     </div>
   );
 };
+
 
 export default PaymentSuccess;

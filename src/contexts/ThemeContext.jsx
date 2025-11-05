@@ -50,6 +50,28 @@ const themes = {
       primary: 'linear-gradient(135deg, #0F766E 0%, #115E59 100%)',
       secondary: 'linear-gradient(135deg, #64748B 0%, #475569 100%)'
     }
+  },
+  ai: {
+    name: 'Neural Intelligence',
+    primary: 'cyan',
+    colors: {
+      primary: '#00D9FF',
+      primaryHover: '#00B8E6',
+      secondary: '#8B5CF6',
+      accent: '#EC4899',
+      background: 'linear-gradient(135deg, #0A0E27, #131620)',
+      surface: 'rgba(19, 22, 32, 0.8)',
+      text: '#E5E7EB',
+      textSecondary: '#9CA3AF',
+      border: 'rgba(0, 217, 255, 0.2)',
+      error: '#EC4899',
+      success: '#10B981',
+      warning: '#F59E0B'
+    },
+    gradients: {
+      primary: 'linear-gradient(135deg, #00D9FF 0%, #0077FF 100%)',
+      secondary: 'linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%)'
+    }
   }
 };
 

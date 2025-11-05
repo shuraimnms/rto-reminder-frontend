@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Phone, Mail, Car } from 'lucide-react';
 import { customersAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import AddCustomerModal from '../components/modals/AddCustomerModal';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,8 @@ const Customers = () => {
     pages: 0
   });
   const { user } = useAuth();
+  const { currentTheme } = useTheme();
+  const isAiTheme = currentTheme === 'ai';
 
   useEffect(() => {
     fetchCustomers();
@@ -63,10 +66,10 @@ const Customers = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
+        <h1 className={isAiTheme ? "text-2xl font-bold text-ai-text-bright" : "text-2xl font-bold text-gray-900"}>Customers</h1>
         <button
           onClick={() => setShowAddModal(true)}
-          className="btn btn-primary flex items-center"
+          className={isAiTheme ? "btn-ai-primary flex items-center" : "btn btn-primary flex items-center"}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Customer
@@ -74,7 +77,7 @@ const Customers = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="card p-4">
+      <div className={isAiTheme ? "card-ai p-4" : "card p-4"}>
         <form onSubmit={handleSearch} className="flex gap-4">
           <div className="flex-1 relative">
             <input
@@ -82,18 +85,18 @@ const Customers = () => {
               placeholder="Search by name, mobile, or vehicle number..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input pl-10 w-full"
+              className={isAiTheme ? "input-ai pl-10 w-full" : "input pl-10 w-full"}
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
-          <button type="submit" className="btn btn-secondary">
+          <button type="submit" className={isAiTheme ? "btn-ai-secondary" : "btn btn-secondary"}>
             Search
           </button>
         </form>
       </div>
 
       {/* Customers Table */}
-      <div className="card">
+      <div className={isAiTheme ? "card-ai" : "card"}>
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">
             Customer List ({pagination.total})
@@ -125,28 +128,28 @@ const Customers = () => {
           <>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className={isAiTheme ? "bg-ai-graphite" : "bg-gray-50"}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Contact
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Vehicle
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={isAiTheme ? "px-6 py-3 text-left text-xs font-medium text-ai-text-dim uppercase tracking-wider" : "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={isAiTheme ? "bg-ai-carbon divide-y divide-ai-graphite" : "bg-white divide-y divide-gray-200"}>
                   {customers.map((customer) => (
-                    <tr key={customer._id} className="hover:bg-gray-50">
+                    <tr key={customer._id} className={isAiTheme ? "hover:bg-ai-graphite" : "hover:bg-gray-50"}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
@@ -187,7 +190,7 @@ const Customers = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={isAiTheme ? `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${customer.is_active ? 'badge-ai-success' : 'badge-ai-warning'}` : `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           customer.is_active
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'

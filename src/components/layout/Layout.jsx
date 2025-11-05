@@ -5,6 +5,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../ThemeSelector';
 import NotificationBell from '../NotificationBell';
 import Chatbot from '../Chatbot';
+import AnimatedBackground from '../AnimatedBackground';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
@@ -33,6 +34,8 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const { user, logout, isAdmin, authChecked } = useAuth();
+  const { currentTheme } = useTheme();
+  const isAiTheme = currentTheme === 'ai';
   const location = useLocation();
 
   useEffect(() => {
@@ -133,9 +136,10 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen theme-transition" style={{ backgroundColor: 'var(--color-background)' }}>
+    <div className={`flex h-screen theme-transition ${isAiTheme ? 'theme-ai' : ''}`} style={{ backgroundColor: 'var(--color-background)' }}>
+      {isAiTheme && <AnimatedBackground />}
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out`}
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out ${isAiTheme ? 'card-ai' : ''}`}
         style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
         <div className="flex items-center justify-between h-16 px-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center">
@@ -158,8 +162,8 @@ const Layout = ({ children }) => {
                   key={item.name}
                   to={item.href}
                   className={`sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${isActive(item.href)
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? (isAiTheme ? 'bg-ai-neural-blue/20 text-ai-text-bright lightning-border' : 'bg-blue-600 text-white shadow-md')
+                    : (isAiTheme ? 'text-ai-text-dim hover:bg-ai-mist' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900')
                     }`}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -201,7 +205,7 @@ const Layout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shadow-sm" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
+        <header className={isAiTheme ? "card-ai" : "shadow-sm"} style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-md" style={{ color: 'var(--color-text-secondary)' }}>
               <Menu className="h-6 w-6" />
