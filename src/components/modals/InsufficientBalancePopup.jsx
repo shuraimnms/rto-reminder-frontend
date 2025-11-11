@@ -29,19 +29,19 @@ const InsufficientBalancePopup = ({ isOpen, onClose, currentBalance, requiredBal
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Current Balance:</span>
-                <span className="font-semibold text-gray-900">₹{currentBalance || 0}</span>
+                <span className="font-semibold text-gray-900">₹{(currentBalance || 0).toFixed(2)}</span>
               </div>
               {requiredBalance && (
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Required Balance:</span>
-                  <span className="font-semibold text-red-600">₹{requiredBalance}</span>
+                  <span className="font-semibold text-red-600">₹{requiredBalance.toFixed(2)}</span>
                 </div>
               )}
               {requiredBalance && (
                 <div className="flex justify-between border-t pt-2">
                   <span className="text-sm text-gray-600">Amount Needed:</span>
                   <span className="font-semibold text-red-600">
-                    ₹{Math.max(0, requiredBalance - (currentBalance || 0))}
+                    ₹{Math.max(0, requiredBalance - (currentBalance || 0)).toFixed(2)}
                   </span>
                 </div>
               )}

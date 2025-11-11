@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { payAPI } from '../services/api';
+import { useAuth } from './AuthContext'; // Import useAuth
 
 const WalletContext = createContext();
 
@@ -14,34 +15,38 @@ export const useWallet = () => {
 export const WalletProvider = ({ children }) => {
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { user, authChecked } = useAuth(); // Get user and authChecked from AuthContext
 
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
+    if (!authChecked || !user) { // Only fetch if auth has been checked and user is logged in
+      setBalance(0); // Set balance to 0 if not authenticated
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const response = await payAPI.getBalance();
-      setBalance(response.data.balance || 0);
+      setBalance(parseFloat(response.data.balance || 0).toFixed(2)); // Format to 2 decimal places
     } catch (error) {
       console.error('Failed to fetch wallet balance:', error);
-      // Don't set balance to 0 on error, keep previous value or handle gracefully
       if (error.message === 'Unauthorized') {
-        // User not logged in, balance should be 0
-        setBalance(0);
+        setBalance(parseFloat(0).toFixed(2)); // Format to 2 decimal places even on unauthorized
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [authChecked, user]); // Re-run fetchBalance when auth status or user changes
 
   useEffect(() => {
     fetchBalance();
-  }, []);
+  }, [fetchBalance]); // Depend on fetchBalance
 
   const refreshBalance = useCallback(() => {
     fetchBalance();
   }, []); // Dependencies for fetchBalance are not needed here as fetchBalance itself doesn't depend on props/state that change frequently
 
   const setWalletBalance = useCallback((newBalance) => {
-    setBalance(newBalance);
+    setBalance(parseFloat(newBalance).toFixed(2)); // Format to 2 decimal places
   }, []);
 
   const value = {

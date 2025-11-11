@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect } from 'react';
+﻿﻿﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -17,9 +17,32 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const StatCard = ({ title, value, icon: Icon, color, subtitle, isAiTheme }) => (
-  <div className={isAiTheme ? "stat-pod hover-lift" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
-    {isAiTheme ? (
+const StatCard = ({ title, value, icon: Icon, color, subtitle, isAiTheme, isNeuralTheme, isWalletBox }) => (
+  <div className={`
+    ${isNeuralTheme ? 'neural-card p-6' : ''}
+    ${isAiTheme && !isNeuralTheme ? 'stat-pod hover-lift' : ''}
+    ${!isAiTheme && !isNeuralTheme ? 'card bg-white rounded-lg shadow-sm border border-gray-200 p-6' : ''}
+    ${isWalletBox && isNeuralTheme ? 'neural-glowing-border' : ''}
+  `}>
+    {isNeuralTheme ? (
+      <div className="relative z-10">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-neural-text-color">{title}</p>
+          <Icon className="h-6 w-6 neural-icon" />
+        </div>
+        <p className="text-3xl font-bold mt-2 text-neural-electric-blue">{value}</p>
+        {subtitle && <p className="text-xs text-neural-text-color mt-1">{subtitle}</p>}
+        {isWalletBox && (
+          <div className="mt-4 flex items-center justify-between">
+            <Link to="/billing" className="neural-button text-sm">Recharge</Link>
+            <div className="flex items-center text-sm text-neural-text-color">
+              <TrendingUp className="h-4 w-4 mr-1 text-neural-aqua-gradient-start" />
+              <span>+5% (30 days)</span> {/* Mini trend indicator */}
+            </div>
+          </div>
+        )}
+      </div>
+    ) : isAiTheme ? (
       <>
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-ai-text-dim">{title}</p>
@@ -50,6 +73,7 @@ const Dashboard = () => {
   const { user, logout, authChecked } = useAuth();
   const { currentTheme } = useTheme();
   const isAiTheme = currentTheme === 'ai';
+  const isNeuralTheme = currentTheme === 'neural';
 
   useEffect(() => {
     if (authChecked && user) {
@@ -104,26 +128,26 @@ const Dashboard = () => {
   const { overview, upcoming_reminders, recent_messages } = displayStats;
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
       {/* Welcome Section */}
-      <div className={isAiTheme ? "card-ai holographic p-6" : "bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"}>
+      <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai holographic p-6" : "bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"}>
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold">Welcome back, {user?.name}! 👋</h1>
-            <p className="text-blue-100 mt-2">
+            <h1 className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : ''}`}>Welcome back, {user?.name}! 👋</h1>
+            <p className={`mt-2 ${isNeuralTheme ? 'text-neural-text-color' : 'text-blue-100'}`}>
               Here's what's happening with your RTO reminder system today.
             </p>
           </div>
           {demoMode && (
-            <div className="flex items-center space-x-2 bg-blue-500 bg-opacity-50 px-3 py-2 rounded-lg">
-              <WifiOff className="h-4 w-4" />
+            <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-blue-500 bg-opacity-50'}`}>
+              <WifiOff className={`h-4 w-4 ${isNeuralTheme ? 'neural-icon' : ''}`} />
               <span className="text-sm">Demo Mode</span>
             </div>
           )}
         </div>
 
         {demoMode && (
-          <div className="mt-3 p-3 bg-blue-500 bg-opacity-30 rounded-lg">
+          <div className={`mt-3 p-3 rounded-lg ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-blue-500 bg-opacity-30'}`}>
             <p className="text-sm">
               <strong>Note:</strong> Using demo data. To see real data, make sure your backend is running on port 3000.
             </p>
@@ -133,20 +157,20 @@ const Dashboard = () => {
 
       {/* Low Balance Alert */}
       {user?.wallet_balance < 50 && (
-        <div className={isAiTheme ? "card-ai p-4 lightning-border" : "bg-yellow-50 border border-yellow-200 rounded-lg p-4"}>
+        <div className={isNeuralTheme ? "neural-card p-4 neural-glowing-border" : isAiTheme ? "card-ai p-4 lightning-border" : "bg-yellow-50 border border-yellow-200 rounded-lg p-4"}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 mr-3" />
+              <AlertTriangle className={`h-5 w-5 mr-3 ${isNeuralTheme ? 'neural-icon' : 'text-yellow-600'}`} />
               <div>
-                <h3 className="text-sm font-medium text-yellow-800">Low Wallet Balance</h3>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h3 className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-yellow-800'}`}>Low Wallet Balance</h3>
+                <p className={`text-sm mt-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-yellow-700'}`}>
                   Your current balance is ₹{user.wallet_balance}. Please top up to continue sending messages.
                 </p>
               </div>
             </div>
               <Link
                 to="/billing"
-                className={isAiTheme ? "btn-ai-danger px-4 py-2 rounded-lg text-sm font-medium" : "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"}
+                className={isNeuralTheme ? "neural-button text-sm" : isAiTheme ? "btn-ai-danger px-4 py-2 rounded-lg text-sm font-medium" : "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"}
               >
                 Top Up Now
               </Link>
@@ -162,6 +186,7 @@ const Dashboard = () => {
           icon={Users}
           color="bg-blue-500"
           isAiTheme={isAiTheme}
+          isNeuralTheme={isNeuralTheme}
         />
         <StatCard
           title="Active Reminders"
@@ -169,14 +194,17 @@ const Dashboard = () => {
           icon={Bell}
           color="bg-green-500"
           isAiTheme={isAiTheme}
+          isNeuralTheme={isNeuralTheme}
         />
         <StatCard
           title="Wallet Balance"
-          value={`₹${overview.wallet_balance}`}
+          value={`₹${overview.wallet_balance.toFixed(2)}`} // Formatted to 2 decimal places
           icon={Wallet}
           color={user?.wallet_balance < 50 ? "bg-red-500" : "bg-purple-500"}
-          subtitle={<span className={isAiTheme ? "text-ai-electric-cyan" : "font-bold text-blue-600"}>₹{overview.per_message_cost} per message (Realtime)</span>}
+          subtitle={<span className={isNeuralTheme ? "text-neural-aqua-gradient-start" : isAiTheme ? "text-ai-electric-cyan" : "font-bold text-blue-600"}>₹{overview.per_message_cost.toFixed(2)} per message (Realtime)</span>}
           isAiTheme={isAiTheme}
+          isNeuralTheme={isNeuralTheme}
+          isWalletBox={true}
         />
         <StatCard
           title="Delivery Rate"
@@ -185,36 +213,37 @@ const Dashboard = () => {
           color="bg-orange-500"
           subtitle="Last 30 days"
           isAiTheme={isAiTheme}
+          isNeuralTheme={isNeuralTheme}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming Reminders */}
-        <div className={isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
-          <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
+        <div className={isNeuralTheme ? "neural-card" : isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
+          <div className={`p-6 border-b ${isNeuralTheme ? 'border-neural-border-color' : 'border-gray-200 theme-dark:border-slate-600'}`}>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Upcoming Reminders</h2>
-              <Calendar className="h-5 w-5 text-gray-400 theme-dark:text-slate-400" />
+              <h2 className={`text-lg font-semibold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 theme-dark:text-white'}`}>Upcoming Reminders</h2>
+              <Calendar className={`h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400 theme-dark:text-slate-400'}`} />
             </div>
           </div>
           <div className="p-6">
             {upcoming_reminders && upcoming_reminders.length > 0 ? (
               <div className="space-y-4">
                 {upcoming_reminders.slice(0, 5).map((reminder) => (
-                  <div key={reminder._id} className="p-3 bg-gray-50 rounded-lg theme-dark:bg-slate-700 flex items-center justify-between">
+                  <div key={reminder._id} className={`p-3 rounded-lg flex items-center justify-between ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-gray-50 theme-dark:bg-slate-700'}`}>
                     <div className="flex items-center">
-                      <div className="p-2 bg-blue-100 rounded-lg mr-3">
-                        <Calendar className="h-5 w-5 text-blue-600" />
+                      <div className={`p-2 rounded-lg mr-3 ${isNeuralTheme ? 'bg-transparent' : 'bg-blue-100'}`}>
+                        <Calendar className={`h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900 theme-dark:text-white">{reminder.customer?.name || 'Customer'}</p>
-                        <p className="text-sm text-gray-600 theme-dark:text-slate-300">
+                        <p className={`font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>{reminder.customer?.name || 'Customer'}</p>
+                        <p className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600 theme-dark:text-slate-300'}`}>
                           {reminder.reminder_type?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} • {reminder.customer?.vehicle_number || 'Vehicle'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900 theme-dark:text-white">
+                      <p className={`text-sm font-semibold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 theme-dark:text-white'}`}>
                         {new Date(reminder.next_send_date).toLocaleString()}
                       </p>
                     </div>
@@ -222,12 +251,12 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-4 theme-dark:text-slate-400">No upcoming reminders</p>
+              <p className={`text-center py-4 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500 theme-dark:text-slate-400'}`}>No upcoming reminders</p>
             )}
             <div className="mt-4">
               <Link
                 to="/reminders"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300"
+                className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-aqua-gradient-start hover:text-neural-electric-blue' : 'text-blue-600 hover:text-blue-700 theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300'}`}
               >
                 View all reminders →
               </Link>
@@ -236,11 +265,11 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Messages */}
-        <div className={isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
-          <div className="p-6 border-b border-gray-200 theme-dark:border-slate-600">
+        <div className={isNeuralTheme ? "neural-card" : isAiTheme ? "card-ai" : "card bg-white rounded-lg shadow-sm border border-gray-200"}>
+          <div className={`p-6 border-b ${isNeuralTheme ? 'border-neural-border-color' : 'border-gray-200 theme-dark:border-slate-600'}`}>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 theme-dark:text-white">Recent Messages</h2>
-              <MessageSquare className="h-5 w-5 text-gray-400 theme-dark:text-slate-400" />
+              <h2 className={`text-lg font-semibold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 theme-dark:text-white'}`}>Recent Messages</h2>
+              <MessageSquare className={`h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400 theme-dark:text-slate-400'}`} />
             </div>
           </div>
           <div className="p-6">
@@ -255,16 +284,16 @@ const Dashboard = () => {
                         message.status === 'FAILED' ? 'bg-red-500' : 'bg-gray-500'
                       }`} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900 theme-dark:text-white">
+                        <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>
                           {message.reminder?.customer?.name || 'Test Message'}
                         </p>
-                        <p className="text-xs text-gray-500 theme-dark:text-slate-400">
+                        <p className={`text-xs ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500 theme-dark:text-slate-400'}`}>
                           {message.template_name?.replace(/_/g, ' ') || 'Message'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-500 theme-dark:text-slate-400">
+                      <p className={`text-xs ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500 theme-dark:text-slate-400'}`}>
                         {message.sent_at ? new Date(message.sent_at).toLocaleDateString() : 'N/A'}
                       </p>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
@@ -279,12 +308,12 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-4 theme-dark:text-slate-400">No recent messages</p>
+              <p className={`text-center py-4 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500 theme-dark:text-slate-400'}`}>No recent messages</p>
             )}
             <div className="mt-4">
               <Link
                 to="/message-logs"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300"
+                className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-aqua-gradient-start hover:text-neural-electric-blue' : 'text-blue-600 hover:text-blue-700 theme-dark:text-cyan-400 theme-dark:hover:text-cyan-300'}`}
               >
                 View all messages →
               </Link>
@@ -297,31 +326,31 @@ const Dashboard = () => {
 
 
       {/* Quick Actions */}
-      <div className={isAiTheme ? "card-ai p-6" : "card p-6"}>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 theme-dark:text-white">Quick Actions</h3>
+      <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai p-6" : "card p-6"}>
+        <h3 className={`text-lg font-semibold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 theme-dark:text-white'}`}>Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/customers?action=create"
-            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
+            className={isNeuralTheme ? "neural-button p-4 text-center" : isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
-            <Users className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
-            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Add Customer</p>
+            <Users className={`h-8 w-8 mx-auto mb-2 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400 theme-dark:text-slate-400'}`} />
+            <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>Add Customer</p>
           </Link>
           <Link
             to="/reminders?action=create"
-            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
+            className={isNeuralTheme ? "neural-button p-4 text-center" : isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
-            <Bell className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
-            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Create Reminder</p>
+            <Bell className={`h-8 w-8 mx-auto mb-2 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400 theme-dark:text-slate-400'}`} />
+            <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>Create Reminder</p>
           </Link>
           <Link
             to="/reminders?action=test"
-            className={isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
+            className={isNeuralTheme ? "neural-button p-4 text-center" : isAiTheme ? "btn-ai-secondary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}
           >
-            <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-2 theme-dark:text-slate-400" />
-            <p className="text-sm font-medium text-gray-900 theme-dark:text-white">Test Message</p>
+            <MessageSquare className={`h-8 w-8 mx-auto mb-2 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400 theme-dark:text-slate-400'}`} />
+            <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>Test Message</p>
           </Link>
-          <div className={isAiTheme ? "btn-ai-primary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}>
+          <div className={isNeuralTheme ? "neural-button p-4 text-center" : isAiTheme ? "btn-ai-primary p-4 text-center" : "p-4 border-2 border-dashed border-gray-300 rounded-lg text-center transition-colors theme-dark:border-slate-600 theme-dark:text-slate-300"}>
             <PayButton onBalanceUpdate={loadDashboardData} />
           </div>
         </div>

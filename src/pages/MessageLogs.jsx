@@ -19,6 +19,8 @@ import {
   Users,
   Send
 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext'; // Import useTheme
+import moment from 'moment'; // For date calculations
 
 const MessageLogs = () => {
   const [messages, setMessages] = useState([]);
@@ -38,11 +40,14 @@ const MessageLogs = () => {
     message_type: '',
     date_from: '',
     date_to: '',
-    search: ''
+    search: '',
+    time_range: 'all' // Added time_range filter
   });
 
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const { currentTheme } = useTheme();
+  const isNeuralTheme = currentTheme === 'neural';
 
   useEffect(() => {
     fetchMessageStats();
@@ -52,6 +57,31 @@ const MessageLogs = () => {
   useEffect(() => {
     fetchMessages();
   }, [pagination.page, filters]);
+
+  const applyTimeRangeFilter = (range) => {
+    const today = moment().format('YYYY-MM-DD');
+    let dateFrom = '';
+    let dateTo = today;
+
+    if (range === 'today') {
+      dateFrom = today;
+    } else if (range === 'weekly') {
+      dateFrom = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    } else if (range === 'monthly') {
+      dateFrom = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    } else { // 'all'
+      dateFrom = '';
+      dateTo = '';
+    }
+
+    setFilters(prev => ({
+      ...prev,
+      time_range: range,
+      date_from: dateFrom,
+      date_to: dateTo
+    }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
 
   const fetchMessages = async () => {
     try {
@@ -68,7 +98,7 @@ const MessageLogs = () => {
       if (filters.date_to) params.date_to = filters.date_to;
       if (filters.search) params.search = filters.search;
 
-      const response = await messagesAPI.getMessageLogs(params);
+      const response = await messagesAPI.getAll(params); // Corrected API call
       const data = response.data || {};
       setMessages(data.messageLogs || []);
       setPagination(prev => ({ ...prev, ...(data.pagination || {}) }));
@@ -155,15 +185,15 @@ const MessageLogs = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Message Logs</h1>
+        <h1 className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 themed-heading'}`}>Message Logs</h1>
         <div className="flex space-x-2">
           <button
             onClick={handleExportCSV}
-            className="btn btn-secondary flex items-center"
+            className={isNeuralTheme ? "neural-button flex items-center" : "btn btn-secondary flex items-center"}
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className={`h-4 w-4 mr-2 ${isNeuralTheme ? 'neural-icon' : ''}`} />
             Export CSV
           </button>
           <button
@@ -171,9 +201,9 @@ const MessageLogs = () => {
               fetchMessages();
               fetchMessageStats();
             }}
-            className="btn btn-secondary flex items-center"
+            className={isNeuralTheme ? "neural-button flex items-center" : "btn btn-secondary flex items-center"}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className={`h-4 w-4 mr-2 ${isNeuralTheme ? 'neural-icon' : ''}`} />
             Refresh
           </button>
         </div>
@@ -182,53 +212,53 @@ const MessageLogs = () => {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="card p-6">
+          <div className={isNeuralTheme ? "neural-card p-6" : "card p-6"}>
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-6 w-6 text-blue-600" />
+              <div className={`p-2 rounded-lg ${isNeuralTheme ? 'bg-transparent' : 'bg-blue-100'}`}>
+                <MessageSquare className={`h-6 w-6 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Messages</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total || 0}</p>
+                <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>Total Messages</p>
+                <p className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{stats.total || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className={isNeuralTheme ? "neural-card p-6" : "card p-6"}>
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className={`p-2 rounded-lg ${isNeuralTheme ? 'bg-transparent' : 'bg-green-100'}`}>
+                <CheckCircle className={`h-6 w-6 ${isNeuralTheme ? 'neural-icon' : 'text-green-600'}`} />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Delivered</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.delivered || 0}</p>
-                <p className="text-xs text-gray-500">
+                <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>Delivered</p>
+                <p className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{stats.delivered || 0}</p>
+                <p className={`text-xs ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   {stats.total ? Math.round((stats.delivered / stats.total) * 100) : 0}% success rate
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className={isNeuralTheme ? "neural-card p-6" : "card p-6"}>
             <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <XCircle className="h-6 w-6 text-red-600" />
+              <div className={`p-2 rounded-lg ${isNeuralTheme ? 'bg-transparent' : 'bg-red-100'}`}>
+                <XCircle className={`h-6 w-6 ${isNeuralTheme ? 'neural-icon' : 'text-red-600'}`} />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Failed</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.failed || 0}</p>
+                <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>Failed</p>
+                <p className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{stats.failed || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className={isNeuralTheme ? "neural-card p-6" : "card p-6"}>
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <Clock className="h-6 w-6 text-yellow-600" />
+              <div className={`p-2 rounded-lg ${isNeuralTheme ? 'bg-transparent' : 'bg-yellow-100'}`}>
+                <Clock className={`h-6 w-6 ${isNeuralTheme ? 'neural-icon' : 'text-yellow-600'}`} />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending || 0}</p>
+                <p className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>Pending</p>
+                <p className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{stats.pending || 0}</p>
               </div>
             </div>
           </div>
@@ -236,7 +266,34 @@ const MessageLogs = () => {
       )}
 
       {/* Filters */}
-      <div className="card p-4">
+      <div className={isNeuralTheme ? "neural-card p-4" : "card p-4"}>
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <button
+            onClick={() => applyTimeRangeFilter('today')}
+            className={`${isNeuralTheme && filters.time_range === 'today' ? 'neural-button' : isNeuralTheme ? 'neural-button-secondary' : 'btn btn-secondary'} flex-1`}
+          >
+            Today
+          </button>
+          <button
+            onClick={() => applyTimeRangeFilter('weekly')}
+            className={`${isNeuralTheme && filters.time_range === 'weekly' ? 'neural-button' : isNeuralTheme ? 'neural-button-secondary' : 'btn btn-secondary'} flex-1`}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => applyTimeRangeFilter('monthly')}
+            className={`${isNeuralTheme && filters.time_range === 'monthly' ? 'neural-button' : isNeuralTheme ? 'neural-button-secondary' : 'btn btn-secondary'} flex-1`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => applyTimeRangeFilter('all')}
+            className={`${isNeuralTheme && filters.time_range === 'all' ? 'neural-button' : isNeuralTheme ? 'neural-button-secondary' : 'btn btn-secondary'} flex-1`}
+          >
+            All Time
+          </button>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <input
@@ -244,15 +301,15 @@ const MessageLogs = () => {
               placeholder="Search by customer name, phone, or message content..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
-              className="input pl-10 w-full"
+              className={`pl-10 w-full ${isNeuralTheme ? 'neural-input' : 'input'}`}
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
           </div>
 
           <select
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
-            className="input"
+            className={isNeuralTheme ? 'neural-input' : 'input'}
           >
             <option value="">All Status</option>
             <option value="DELIVERED">Delivered</option>
@@ -264,7 +321,7 @@ const MessageLogs = () => {
           <select
             value={filters.message_type}
             onChange={(e) => handleFilterChange('message_type', e.target.value)}
-            className="input"
+            className={isNeuralTheme ? 'neural-input' : 'input'}
           >
             <option value="">All Types</option>
             <option value="SMS">SMS</option>
@@ -273,9 +330,9 @@ const MessageLogs = () => {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="btn btn-secondary flex items-center"
+            className={isNeuralTheme ? "neural-button flex items-center" : "btn btn-secondary flex items-center"}
           >
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className={`h-4 w-4 mr-2 ${isNeuralTheme ? 'neural-icon' : ''}`} />
             Filters
           </button>
         </div>
@@ -283,21 +340,21 @@ const MessageLogs = () => {
         {showFilters && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+              <label className={`block text-sm font-medium mb-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>Date From</label>
               <input
                 type="date"
                 value={filters.date_from}
                 onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                className="input w-full"
+                className={`w-full ${isNeuralTheme ? 'neural-input' : 'input'}`}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+              <label className={`block text-sm font-medium mb-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>Date To</label>
               <input
                 type="date"
                 value={filters.date_to}
                 onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                className="input w-full"
+                className={`w-full ${isNeuralTheme ? 'neural-input' : 'input'}`}
               />
             </div>
           </div>
@@ -305,71 +362,71 @@ const MessageLogs = () => {
       </div>
 
       {/* Messages Table */}
-      <div className="card">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+      <div className={isNeuralTheme ? "neural-card" : "card"}>
+        <div className={`px-6 py-4 border-b ${isNeuralTheme ? 'border-neural-border-color' : 'border-gray-200'}`}>
+          <h3 className={`text-lg font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 themed-heading'}`}>
             Message Logs ({pagination.total})
           </h3>
         </div>
 
         {loading ? (
           <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading messages...</p>
+            <div className={`animate-spin rounded-full h-8 w-8 border-b-2 mx-auto ${isNeuralTheme ? 'border-neural-electric-blue' : 'border-blue-600'}`}></div>
+            <p className={`mt-2 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>Loading messages...</p>
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className={`min-w-full divide-y ${isNeuralTheme ? 'divide-neural-border-color' : 'divide-gray-200'}`}>
+                <thead className={isNeuralTheme ? 'bg-neural-card-background' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Message
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Sent At
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Delivered At
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       Error Message
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`${isNeuralTheme ? 'bg-neural-card-background divide-neural-border-color' : 'bg-white divide-gray-200'}`}>
                   {messages.map((message) => (
-                    <tr key={message._id} className="hover:bg-gray-50">
+                    <tr key={message._id} className={isNeuralTheme ? 'hover:bg-neural-background-light' : 'hover:bg-gray-50'}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                              <span className="text-sm font-medium text-white">
+                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isNeuralTheme ? 'bg-neural-electric-blue' : 'bg-blue-500'}`}>
+                              <span className={`text-sm font-medium ${isNeuralTheme ? 'text-white' : 'text-white'}`}>
                                 {message.customer_name ? message.customer_name.charAt(0).toUpperCase() : '?'}
                               </span>
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`}>
                               {message.customer_name || 'Unknown Customer'}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                               {message.customer_mobile || 'N/A'}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs truncate" title={message.content}>
+                        <div className={`text-sm max-w-xs truncate ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`} title={message.content}>
                           {message.template_name || 'N/A'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                           Type: {message.message_type || 'N/A'}
                         </div>
                       </td>
@@ -380,17 +437,17 @@ const MessageLogs = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`}>
                           {message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`}>
                           {message.delivered_at ? new Date(message.delivered_at).toLocaleString() : 'N/A'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 max-w-xs truncate" title={message.error_message}>
+                        <div className={`text-sm max-w-xs truncate ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`} title={message.error_message}>
                           {message.error_message || 'N/A'}
                         </div>
                       </td>
@@ -402,8 +459,8 @@ const MessageLogs = () => {
 
             {/* Pagination */}
             {pagination.pages > 1 && (
-              <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+              <div className={`px-6 py-4 border-t flex items-center justify-between ${isNeuralTheme ? 'border-neural-border-color' : 'border-gray-200'}`}>
+                <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>
                   Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
                   {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
                   {pagination.total} messages
@@ -412,14 +469,14 @@ const MessageLogs = () => {
                   <button
                     onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                     disabled={pagination.page === 1}
-                    className="btn btn-secondary disabled:opacity-50"
+                    className={isNeuralTheme ? "neural-button disabled:opacity-50" : "btn btn-secondary disabled:opacity-50"}
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                     disabled={pagination.page === pagination.pages}
-                    className="btn btn-secondary disabled:opacity-50"
+                    className={isNeuralTheme ? "neural-button disabled:opacity-50" : "btn btn-secondary disabled:opacity-50"}
                   >
                     Next
                   </button>

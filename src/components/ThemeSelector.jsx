@@ -5,6 +5,7 @@ import { Palette, Check, Sparkles } from 'lucide-react';
 const ThemeSelector = () => {
   const { theme, currentTheme, themes, changeTheme, isAnimating } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const isNeuralTheme = currentTheme === 'neural';
 
   const themeOptions = [
     {
@@ -36,6 +37,16 @@ const ThemeSelector = () => {
         secondary: '#8B5CF6',
         background: '#0A0E27'
       }
+    },
+    {
+      key: 'neural',
+      name: 'Neural Theme',
+      description: 'Soft neon + neural mesh aesthetic',
+      preview: {
+        primary: '#00aaff',
+        secondary: '#aa00ff',
+        background: '#0a0a1a'
+      }
     }
   ];
 
@@ -51,13 +62,13 @@ const ThemeSelector = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 card rounded-xl shadow-xl z-50 overflow-hidden max-w-[calc(100vw-2rem)] sm:right-0 left-auto">
-          <div className="p-4 border-b border-gray-200 theme-dark:border-slate-600">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center theme-dark:text-white">
-              <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
+        <div className={`absolute right-0 mt-2 w-80 rounded-xl shadow-xl z-50 overflow-hidden max-w-[calc(100vw-2rem)] sm:right-0 left-auto ${currentTheme === 'neural' ? 'neural-card' : 'card'}`}>
+          <div className={`p-4 border-b ${currentTheme === 'neural' ? 'border-neural-border-color' : 'border-gray-200 theme-dark:border-slate-600'}`}>
+            <h3 className={`text-lg font-semibold flex items-center ${currentTheme === 'neural' ? 'text-neural-electric-blue' : 'text-gray-900 theme-dark:text-white'}`}>
+              <Sparkles className={`h-5 w-5 mr-2 ${currentTheme === 'neural' ? 'neural-icon' : 'text-yellow-500'}`} />
               Choose Theme
             </h3>
-            <p className="text-sm text-gray-600 mt-1 theme-dark:text-slate-300">Select a theme that suits your style</p>
+            <p className={`text-sm mt-1 ${currentTheme === 'neural' ? 'text-neural-text-color' : 'text-gray-600 theme-dark:text-slate-300'}`}>Select a theme that suits your style</p>
           </div>
 
           <div className="p-2 max-h-96 overflow-y-auto">
@@ -71,8 +82,8 @@ const ThemeSelector = () => {
                 disabled={isAnimating}
                 className={`w-full p-3 rounded-lg text-left transition-all duration-200 ${
                   currentTheme === option.key
-                    ? 'ring-2 ring-blue-500 bg-blue-50 theme-dark:ring-2 theme-dark:ring-cyan-400 theme-dark:bg-slate-700'
-                    : 'hover:bg-gray-50 theme-dark:hover:bg-slate-600'
+                    ? (isNeuralTheme ? 'ring-2 ring-neural-electric-blue bg-neural-background-light' : 'ring-2 ring-blue-500 bg-blue-50 theme-dark:ring-2 theme-dark:ring-cyan-400 theme-dark:bg-slate-700')
+                    : (isNeuralTheme ? 'hover:bg-neural-background-light' : 'hover:bg-gray-50 theme-dark:hover:bg-slate-600')
                 } ${isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex items-center justify-between">
@@ -92,20 +103,20 @@ const ThemeSelector = () => {
                       ></div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900 theme-dark:text-white">{option.name}</div>
-                      <div className="text-sm text-gray-600 theme-dark:text-slate-300">{option.description}</div>
+                      <div className={`font-medium ${currentTheme === 'neural' ? 'text-neural-text-color' : 'text-gray-900 theme-dark:text-white'}`}>{option.name}</div>
+                      <div className={`text-sm ${currentTheme === 'neural' ? 'text-neural-text-color' : 'text-gray-600 theme-dark:text-slate-300'}`}>{option.description}</div>
                     </div>
                   </div>
                   {currentTheme === option.key && (
-                    <Check className="h-5 w-5 text-blue-600" />
+                    <Check className={`h-5 w-5 ${currentTheme === 'neural' ? 'neural-icon' : 'text-blue-600'}`} />
                   )}
                 </div>
               </button>
             ))}
           </div>
 
-          <div className="p-3 border-t border-gray-200 bg-gray-50 theme-dark:border-slate-600 theme-dark:bg-slate-700">
-            <div className="text-xs text-gray-500 text-center theme-dark:text-slate-400">
+          <div className={`p-3 border-t ${currentTheme === 'neural' ? 'border-neural-border-color bg-neural-card-background' : 'border-gray-200 bg-gray-50 theme-dark:border-slate-600 theme-dark:bg-slate-700'}`}>
+            <div className={`text-xs text-center ${currentTheme === 'neural' ? 'text-neural-text-color' : 'text-gray-500 theme-dark:text-slate-400'}`}>
               Theme changes apply instantly
             </div>
           </div>

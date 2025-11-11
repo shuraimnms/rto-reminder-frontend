@@ -12,7 +12,10 @@ import {
   Calendar,
   BarChart2,
   Shield,
+  Lightbulb, // Added for neural theme
+  HelpCircle, // Added for neural theme
 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext'; // Import useTheme
 
 const featureCards = [
   {
@@ -176,15 +179,18 @@ const guidanceSections = [
 ];
 
 const Guidance = () => {
+  const { currentTheme } = useTheme();
+  const isNeuralTheme = currentTheme === 'neural';
+
   return (
-    <div className="space-y-12">
+    <div className={`space-y-12 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
       {/* Header */}
-      <div className="text-center p-8 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl">
-        <BookOpen className="mx-auto h-16 w-16 text-blue-600" />
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+      <div className={`text-center p-8 rounded-xl ${isNeuralTheme ? 'neural-card neural-glowing-border' : 'bg-gradient-to-r from-blue-50 to-indigo-100'}`}>
+        <BookOpen className={`mx-auto h-16 w-16 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
+        <h1 className={`mt-4 text-4xl font-bold tracking-tight sm:text-5xl ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>
           Agent Guidance Center
         </h1>
-        <p className="mt-6 text-lg leading-8 text-gray-600">
+        <p className={`mt-6 text-lg leading-8 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
           Your complete guide to mastering the RTO Reminder System.
         </p>
       </div>
@@ -195,15 +201,15 @@ const Guidance = () => {
           <a
             key={card.title}
             href={card.href}
-            className="card p-6 flex flex-col items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className={`p-6 flex flex-col items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${isNeuralTheme ? 'neural-card' : 'card'}`}
           >
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <card.icon className="h-8 w-8 text-blue-600" />
+            <div className={`p-3 rounded-lg ${isNeuralTheme ? 'bg-transparent' : 'bg-blue-100'}`}>
+              <card.icon className={`h-8 w-8 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">{card.title}</h3>
-            <p className="mt-2 text-sm text-gray-600 flex-grow">{card.description}</p>
-            <div className="mt-4 inline-flex items-center text-blue-600 font-medium">
-              Learn More <ArrowRight className="ml-2 h-4 w-4" />
+            <h3 className={`mt-4 text-lg font-semibold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{card.title}</h3>
+            <p className={`mt-2 text-sm flex-grow ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>{card.description}</p>
+            <div className={`mt-4 inline-flex items-center font-medium ${isNeuralTheme ? 'text-neural-aqua-gradient-start hover:text-neural-electric-blue' : 'text-blue-600'}`}>
+              Learn More <ArrowRight className={`ml-2 h-4 w-4 ${isNeuralTheme ? 'neural-icon' : ''}`} />
             </div>
           </a>
         ))}
@@ -212,24 +218,24 @@ const Guidance = () => {
       {/* Detailed Sections */}
       <div className="space-y-16">
         {guidanceSections.map((section) => (
-          <div key={section.id} id={section.id} className="card p-8 scroll-mt-20">
+          <div key={section.id} id={section.id} className={`p-8 scroll-mt-20 ${isNeuralTheme ? 'neural-card' : 'card'}`}>
             <div className="flex items-center mb-6">
-              <div className="p-3 bg-blue-100 rounded-lg mr-4">
-                <section.icon className="h-8 w-8 text-blue-600" />
+              <div className={`p-3 rounded-lg mr-4 ${isNeuralTheme ? 'bg-transparent' : 'bg-blue-100'}`}>
+                <section.icon className={`h-8 w-8 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900">{section.title}</h2>
+              <h2 className={`text-3xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{section.title}</h2>
             </div>
             <div className="space-y-6">
               {section.steps.map((step, index) => (
                 <div key={index} className="flex items-start">
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-blue-600">
-                      <step.icon className="h-5 w-5 text-blue-600" />
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${isNeuralTheme ? 'border-neural-electric-blue' : 'border-blue-600'}`}>
+                      <step.icon className={`h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-blue-600'}`} />
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h4 className="text-lg font-medium text-gray-900">{step.title}</h4>
-                    <p className="mt-1 text-gray-600">{step.description}</p>
+                    <h4 className={`text-lg font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{step.title}</h4>
+                    <p className={`mt-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>{step.description}</p>
                   </div>
                 </div>
               ))}

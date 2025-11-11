@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { X, Calendar, Car, User, AlertTriangle } from 'lucide-react';
-import { remindersAPI, customersAPI, payAPI } from '../../services/api';
+import { remindersAPI, customersAPI } from '../../services/api'; // Removed payAPI as it's not directly used here
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import InsufficientBalancePopup from './InsufficientBalancePopup';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
-  const [showBalancePopup, setShowBalancePopup] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(0);
-  const { user } = useAuth();
+  const [showInsufficientBalancePopup, setShowInsufficientBalancePopup] = useState(false); // New state for popup
+  const { user, refreshUser } = useAuth(); // Get user and refreshUser from AuthContext
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
+  const { currentTheme } = useTheme();
+  const isNeuralTheme = currentTheme === 'neural';
 
   const reminderTypes = [
     { value: 'vehicle_insurance_reminder', label: 'Vehicle Insurance' },
@@ -46,41 +48,33 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
   const selectedCustomerId = watch('customer');
   const selectedCustomer = customers.find(c => c._id === selectedCustomerId);
 
-  const checkWalletBalance = async () => {
-    try {
-      const response = await payAPI.getBalance();
-      const balance = response.balance || 0;
-      setWalletBalance(balance);
-      return balance;
-    } catch (error) {
-      console.error('Failed to fetch wallet balance:', error);
-      return 0;
-    }
-  };
-
   const onSubmit = async (data) => {
-    // Check wallet balance before creating reminder
-    const balance = await checkWalletBalance();
-    const messageCost = user?.settings?.per_message_cost || 1.0;
-
-    if (balance < messageCost) {
-      setShowBalancePopup(true);
-      return;
+    setLoading(true);
+    
+    // Check wallet balance before proceeding
+    const perMessageCost = user?.settings?.per_message_cost || 1.0;
+    if (user?.wallet_balance < perMessageCost) {
+      setShowInsufficientBalancePopup(true);
+      setLoading(false);
+      return; // Stop the submission
     }
 
-    setLoading(true);
     try {
+      // Remove reminder_time from data if it exists, as it's no longer needed
+      const { reminder_time, ...restOfData } = data; 
       const reminderData = {
-        ...data,
+        ...restOfData,
         expiry_date: new Date(data.expiry_date).toISOString(),
-        lead_times: [30, 7, 3, 1] // Default lead times
+        lead_times: [30, 7, 3, 1]
       };
+      console.log('Sending reminder data:', reminderData);
 
       await remindersAPI.create(reminderData);
       toast.success('Reminder created successfully!');
       reset();
       onClose();
       if (onSuccess) onSuccess();
+      refreshUser(); // Refresh user data to update wallet balance
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to create reminder';
       toast.error(errorMessage);
@@ -89,37 +83,38 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
     }
   };
 
-  const handleTopUp = () => {
-    setShowBalancePopup(false);
-    // Navigate to billing page
-    window.location.href = '/billing';
-  };
-
   if (!isOpen) return null;
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Create New Reminder</h3>
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 ${isNeuralTheme ? 'neural-modal-overlay' : ''}`}>
+        <div className={`max-w-lg w-full max-h-[90vh] overflow-y-auto ${isNeuralTheme ? 'neural-card neural-modal-content' : 'bg-white rounded-lg'}`}>
+          <div className={`flex items-center justify-between p-6 border-b ${isNeuralTheme ? 'border-neural-border-color' : 'border-gray-200'}`}>
+            <h3 className={`text-lg font-semibold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 themed-heading'}`}>Create New Reminder</h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className={`hover:text-gray-600 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-400'}`}
             >
-              <X className="h-6 w-6" />
+              <X className={`h-6 w-6 ${isNeuralTheme ? 'neural-icon' : ''}`} />
             </button>
           </div>
 
+          {user && user.wallet_balance < (user.settings?.per_message_cost || 1.0) && (
+            <div className="p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+              <p className="font-bold">Insufficient Balance!</p>
+              <p>Your current wallet balance is {user.wallet_balance}. A minimum of {user.settings?.per_message_cost || 1.0} is required to create a reminder.</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>
                 Select Customer *
               </label>
               <div className="relative">
                 <select
                   {...register('customer', { required: 'Please select a customer' })}
-                  className="input pl-10"
+                  className={`pl-10 ${isNeuralTheme ? 'neural-input' : 'input'}`}
                   disabled={loadingCustomers}
                 >
                   <option value="">
@@ -131,7 +126,7 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
                     </option>
                   ))}
                 </select>
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
               </div>
               {errors.customer && (
                 <p className="mt-1 text-sm text-red-600">{errors.customer.message}</p>
@@ -139,13 +134,13 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>
                 Reminder Type *
               </label>
               <div className="relative">
                 <select
                   {...register('reminder_type', { required: 'Please select reminder type' })}
-                  className="input pl-10"
+                  className={`pl-10 ${isNeuralTheme ? 'neural-input' : 'input'}`}
                 >
                   <option value="">Select reminder type</option>
                   {reminderTypes.map(type => (
@@ -154,7 +149,7 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
                     </option>
                   ))}
                 </select>
-                <Car className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Car className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
               </div>
               {errors.reminder_type && (
                 <p className="mt-1 text-sm text-red-600">{errors.reminder_type.message}</p>
@@ -162,27 +157,28 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-700'}`}>
                 Expiry Date *
               </label>
               <div className="relative">
                 <input
                   {...register('expiry_date', { required: 'Expiry date is required' })}
                   type="date"
-                  className="input pl-10"
+                  className={`pl-10 ${isNeuralTheme ? 'neural-input' : 'input'}`}
                   min={new Date().toISOString().split('T')[0]}
                 />
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
               </div>
               {errors.expiry_date && (
                 <p className="mt-1 text-sm text-red-600">{errors.expiry_date.message}</p>
               )}
             </div>
 
+
             {selectedCustomer && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-900 mb-2">Customer Details</h4>
-                <div className="text-sm text-gray-600 space-y-1">
+              <div className={`p-4 rounded-lg ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-gray-50'}`}>
+                <h4 className={`text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900 themed-heading'}`}>Customer Details</h4>
+                <div className={`text-sm space-y-1 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
                   <p><strong>Name:</strong> {selectedCustomer.name}</p>
                   <p><strong>Mobile:</strong> {selectedCustomer.mobile}</p>
                   <p><strong>Vehicle:</strong> {selectedCustomer.vehicle_number}</p>
@@ -195,14 +191,14 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="btn btn-secondary"
+                className={isNeuralTheme ? "neural-button" : "btn btn-secondary"}
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="btn btn-primary"
+                className={isNeuralTheme ? "neural-button" : "btn btn-primary"}
                 disabled={loading}
               >
                 {loading ? (
@@ -216,13 +212,14 @@ const CreateReminderModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
       </div>
 
-      <InsufficientBalancePopup
-        isOpen={showBalancePopup}
-        onClose={() => setShowBalancePopup(false)}
-        currentBalance={walletBalance}
-        requiredBalance={user?.settings?.per_message_cost || 1.0}
-        onTopUp={handleTopUp}
-      />
+      {showInsufficientBalancePopup && (
+        <InsufficientBalancePopup
+          isOpen={showInsufficientBalancePopup}
+          onClose={() => setShowInsufficientBalancePopup(false)}
+          currentBalance={user?.wallet_balance || 0}
+          requiredBalance={user?.settings?.per_message_cost || 1.0}
+        />
+      )}
     </>
   );
 };

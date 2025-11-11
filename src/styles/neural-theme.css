@@ -1,0 +1,165 @@
+/* Neural Theme - Base Styles */
+
+:root {
+  --neural-electric-blue: #00aaff;
+  --neural-neon-purple: #aa00ff;
+  --neural-aqua-gradient-start: #00ffff;
+  --neural-aqua-gradient-end: #00aaff;
+  --neural-soft-white-glow: rgba(255, 255, 255, 0.1);
+  --neural-background-dark: #0a0a1a;
+  --neural-background-light: #1a1a2a;
+  --neural-text-color: #e0e0ff;
+  --neural-border-color: rgba(0, 170, 255, 0.3);
+  --neural-card-background: rgba(26, 26, 42, 0.7);
+  --neural-card-shadow: 0 0 15px rgba(0, 170, 255, 0.2), 0 0 30px rgba(170, 0, 255, 0.1);
+  --neural-glow-effect: 0 0 8px var(--neural-electric-blue), 0 0 16px var(--neural-neon-purple);
+  --neural-hover-glow: 0 0 10px var(--neural-electric-blue), 0 0 20px var(--neural-neon-purple);
+}
+
+.neural-theme {
+  background: radial-gradient(circle at top left, var(--neural-background-light) 0%, var(--neural-background-dark) 100%);
+  color: var(--neural-text-color);
+  font-family: 'Orbitron', sans-serif; /* Placeholder, will use a futuristic rounded font */
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Neural Mesh Background Effect */
+.neural-theme::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(to right, rgba(0, 170, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 170, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* General Card Styles */
+.neural-card {
+  background: var(--neural-card-background);
+  border: 1px solid var(--neural-border-color);
+  border-radius: 12px;
+  box-shadow: var(--neural-card-shadow);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.neural-card:hover {
+  box-shadow: var(--neural-hover-glow);
+  transform: translateY(-3px);
+}
+
+/* Glowing Border Effect for specific elements */
+.neural-glowing-border {
+  position: relative;
+  border: none;
+  padding: 2px; /* For the actual content inside */
+}
+
+.neural-glowing-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px; /* Match card border-radius */
+  padding: 2px; /* Adjust for desired glow thickness */
+  background: linear-gradient(45deg, var(--neural-electric-blue), var(--neural-neon-purple), var(--neural-aqua-gradient-start));
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude; 
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Buttons */
+.neural-button {
+  background: linear-gradient(45deg, var(--neural-electric-blue), var(--neural-neon-purple));
+  color: var(--neural-text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.neural-button:hover {
+  box-shadow: var(--neural-hover-glow);
+  transform: translateY(-2px);
+}
+
+/* Input Fields */
+.neural-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--neural-border-color);
+  border-radius: 8px;
+  color: var(--neural-text-color);
+  padding: 10px 15px;
+  transition: all 0.3s ease-in-out;
+}
+
+.neural-input:focus {
+  outline: none;
+  border-color: var(--neural-electric-blue);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
+}
+
+/* Icons */
+.neural-icon {
+  color: var(--neural-electric-blue);
+  text-shadow: var(--neural-glow-effect);
+  transition: all 0.3s ease-in-out;
+}
+
+.neural-icon:hover {
+  color: var(--neural-neon-purple);
+  text-shadow: var(--neural-hover-glow);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif; /* Placeholder */
+  font-weight: bold;
+  color: var(--neural-electric-blue);
+  text-shadow: var(--neural-glow-effect);
+}
+
+/* Z-index management */
+.neural-notification-panel {
+  z-index: 1000; /* Ensure it stays on top */
+}
+
+.neural-modal-overlay {
+  z-index: 999;
+}
+
+.neural-modal-content {
+  z-index: 1000;
+}
+
+/* General spacing and alignment */
+.neural-dashboard-grid {
+  display: grid;
+  gap: 20px; /* Balanced spacing */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .neural-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

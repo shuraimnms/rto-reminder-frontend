@@ -18,8 +18,10 @@ import {
   Edit,
   Trash2,
   MoreVertical,
-  Download
+  Download,
+  LifeBuoy, // Added for neural theme
 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext'; // Import useTheme
 
 const Support = () => {
   const { user } = useAuth();
@@ -44,6 +46,8 @@ const Support = () => {
     status: 'Open'
   });
   const fileInputRef = useRef(null);
+  const { currentTheme } = useTheme();
+  const isNeuralTheme = currentTheme === 'neural';
 
   useEffect(() => {
     fetchTickets();
@@ -187,16 +191,16 @@ const Support = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4">Edit Support Ticket</h2>
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isNeuralTheme ? 'neural-modal-overlay' : ''}`}>
+        <div className={`w-full max-w-md max-h-[90vh] overflow-y-auto ${isNeuralTheme ? 'neural-card neural-modal-content' : 'bg-white rounded-lg p-6'}`}>
+          <h2 className={`text-xl font-bold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Edit Support Ticket</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Subject</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Subject</label>
               <select
                 value={editFormData.subject}
                 onChange={(e) => setEditFormData({...editFormData, subject: e.target.value})}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
                 required
               >
                 <option value="">Select Subject</option>
@@ -209,11 +213,11 @@ const Support = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Status</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Status</label>
               <select
                 value={editFormData.status}
                 onChange={(e) => setEditFormData({...editFormData, status: e.target.value})}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
               >
                 <option value="Open">Open</option>
                 <option value="In Progress">In Progress</option>
@@ -223,11 +227,11 @@ const Support = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Priority</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Priority</label>
               <select
                 value={editFormData.priority}
                 onChange={(e) => setEditFormData({...editFormData, priority: e.target.value})}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
               >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -237,11 +241,11 @@ const Support = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Description</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Description</label>
               <textarea
                 value={editFormData.description}
                 onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
-                className="w-full p-2 border rounded-lg h-32"
+                className={`w-full p-2 rounded-lg h-32 ${isNeuralTheme ? 'neural-input' : 'border'}`}
                 placeholder="Describe your issue..."
                 required
               />
@@ -251,13 +255,13 @@ const Support = () => {
               <button
                 type="button"
                 onClick={() => setShowEditModal(false)}
-                className="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-100"
+                className={isNeuralTheme ? "neural-button" : "px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-100"}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className={isNeuralTheme ? "neural-button" : "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"}
               >
                 Update Ticket
               </button>
@@ -290,16 +294,16 @@ const Support = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4">Create Support Ticket</h2>
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isNeuralTheme ? 'neural-modal-overlay' : ''}`}>
+        <div className={`w-full max-w-md max-h-[90vh] overflow-y-auto ${isNeuralTheme ? 'neural-card neural-modal-content' : 'bg-white rounded-lg p-6'}`}>
+          <h2 className={`text-xl font-bold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Create Support Ticket</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Subject</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Subject</label>
               <select
                 value={formData.subject}
                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
                 required
               >
                 <option value="">Select Subject</option>
@@ -312,11 +316,11 @@ const Support = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Priority</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Priority</label>
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData({...formData, priority: e.target.value})}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
               >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -326,36 +330,36 @@ const Support = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Description</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full p-2 border rounded-lg h-32"
+                className={`w-full p-2 rounded-lg h-32 ${isNeuralTheme ? 'neural-input' : 'border'}`}
                 placeholder="Describe your issue..."
                 required
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Attachments</label>
+              <label className={`block text-sm font-medium mb-2 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>Attachments</label>
               <input
                 type="file"
                 multiple
                 onChange={handleFileChange}
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
                 accept="image/*,.pdf,.doc,.docx,.txt"
               />
               {attachments.length > 0 && (
                 <div className="mt-2">
                   {attachments.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded mb-1">
+                    <div key={index} className={`flex items-center justify-between p-2 rounded mb-1 ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-gray-100'}`}>
                       <span className="text-sm">{file.name}</span>
                       <button
                         type="button"
                         onClick={() => removeAttachment(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className={`hover:text-red-700 ${isNeuralTheme ? 'text-neural-text-color' : 'text-red-500'}`}
                       >
-                        <XCircle size={16} />
+                        <XCircle size={16} className={isNeuralTheme ? 'neural-icon' : ''} />
                       </button>
                     </div>
                   ))}
@@ -367,13 +371,13 @@ const Support = () => {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-100"
+                className={isNeuralTheme ? "neural-button" : "px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-100"}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className={isNeuralTheme ? "neural-button" : "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"}
               >
                 Create Ticket
               </button>
@@ -404,18 +408,18 @@ const Support = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isNeuralTheme ? 'neural-modal-overlay' : ''}`}>
+        <div className={`w-full max-w-4xl max-h-[90vh] overflow-hidden ${isNeuralTheme ? 'neural-card neural-modal-content' : 'bg-white rounded-lg'}`}>
           <div className="flex">
             {/* Ticket Messages */}
             <div className="flex-1 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold">Ticket #{selectedTicket.ticketNumber}</h2>
+                <h2 className={`text-xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Ticket #{selectedTicket.ticketNumber}</h2>
                 <button
                   onClick={() => setSelectedTicket(null)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className={`hover:text-gray-700 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}
                 >
-                  <XCircle size={24} />
+                  <XCircle size={24} className={isNeuralTheme ? 'neural-icon' : ''} />
                 </button>
               </div>
 
@@ -428,8 +432,8 @@ const Support = () => {
                     {selectedTicket.priority}
                   </span>
                 </div>
-                <h3 className="font-medium">{selectedTicket.subject}</h3>
-                <p className="text-gray-600 text-sm">{selectedTicket.description}</p>
+                <h3 className={`font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>{selectedTicket.subject}</h3>
+                <p className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>{selectedTicket.description}</p>
               </div>
 
               {/* Messages */}
@@ -438,8 +442,8 @@ const Support = () => {
                   <div key={index} className={`flex ${message.senderRole === 'agent' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                       message.senderRole === 'agent'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-800'
+                        ? (isNeuralTheme ? 'bg-neural-electric-blue text-white' : 'bg-blue-500 text-white')
+                        : (isNeuralTheme ? 'bg-neural-card-background text-neural-text-color border border-neural-border-color' : 'bg-gray-200 text-gray-800')
                     }`}>
                       <p className="text-sm">{message.message}</p>
                       {message.attachments && message.attachments.length > 0 && (
@@ -450,9 +454,9 @@ const Support = () => {
                                 href={attachment.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center text-xs underline"
+                                className={`flex items-center text-xs underline ${isNeuralTheme ? 'text-neural-aqua-gradient-start' : ''}`}
                               >
-                                <Paperclip size={12} className="mr-1" />
+                                <Paperclip size={12} className={`mr-1 ${isNeuralTheme ? 'neural-icon' : ''}`} />
                                 {attachment.originalName}
                               </a>
                               <button
@@ -462,22 +466,22 @@ const Support = () => {
                                   link.download = attachment.originalName;
                                   link.click();
                                 }}
-                                className="ml-2 text-gray-500 hover:text-gray-700"
+                                className={`ml-2 hover:text-gray-700 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}
                                 title="Download"
                               >
-                                <Download size={12} />
+                                <Download size={12} className={isNeuralTheme ? 'neural-icon' : ''} />
                               </button>
                             </div>
                           ))}
                         </div>
                       )}
-                      <p className="text-xs mt-1 opacity-70">
+                      <p className={`text-xs mt-1 opacity-70 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
                         {new Date(message.timestamp).toLocaleString()}
                       </p>
                     </div>
                   </div>
                 )) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className={`text-center py-8 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                     No messages yet.
                   </div>
                 )}
@@ -485,7 +489,7 @@ const Support = () => {
 
               {/* Message Input */}
               {selectedTicket.status !== 'Closed' && (
-                <div className="border-t pt-4">
+                <div className={`pt-4 ${isNeuralTheme ? 'border-t border-neural-border-color' : 'border-t'}`}>
                   <div className="flex space-x-2">
                     <input
                       type="file"
@@ -497,9 +501,9 @@ const Support = () => {
                     />
                     <button
                       onClick={() => fileInputRef.current.click()}
-                      className="p-2 text-gray-500 hover:text-gray-700"
+                      className={`p-2 hover:text-gray-700 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}
                     >
-                      <Paperclip size={20} />
+                      <Paperclip size={20} className={isNeuralTheme ? 'neural-icon' : ''} />
                     </button>
                     <input
                       type="text"
@@ -507,25 +511,25 @@ const Support = () => {
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       placeholder="Type your message..."
-                      className="flex-1 p-2 border rounded-lg"
+                      className={`flex-1 p-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
                     />
                     <button
                       onClick={handleSendMessage}
-                      className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                      className={isNeuralTheme ? "neural-button" : "p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"}
                     >
-                      <Send size={20} />
+                      <Send size={20} className={isNeuralTheme ? 'neural-icon' : ''} />
                     </button>
                   </div>
                   {attachments.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {attachments.map((file, index) => (
-                        <div key={index} className="flex items-center bg-gray-100 p-1 rounded">
+                        <div key={index} className={`flex items-center p-1 rounded ${isNeuralTheme ? 'bg-neural-card-background border border-neural-border-color' : 'bg-gray-100'}`}>
                           <span className="text-xs mr-1">{file.name}</span>
                           <button
                             onClick={() => removeAttachment(index)}
-                            className="text-red-500 hover:text-red-700"
+                            className={`hover:text-red-700 ${isNeuralTheme ? 'text-neural-text-color' : 'text-red-500'}`}
                           >
-                            <XCircle size={12} />
+                            <XCircle size={12} className={isNeuralTheme ? 'neural-icon' : ''} />
                           </button>
                         </div>
                       ))}
@@ -536,14 +540,14 @@ const Support = () => {
 
               {/* Rating Section */}
               {selectedTicket.status === 'Resolved' && !selectedTicket.rating && (
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-medium mb-2">Rate this support</h4>
+                <div className={`pt-4 mt-4 ${isNeuralTheme ? 'border-t border-neural-border-color' : 'border-t'}`}>
+                  <h4 className={`font-medium mb-2 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Rate this support</h4>
                   <div className="flex items-center space-x-1 mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         onClick={() => setRating(star)}
-                        className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                        className={`text-2xl ${star <= rating ? 'text-yellow-400' : (isNeuralTheme ? 'text-neural-text-color' : 'text-gray-300')}`}
                       >
                         ★
                       </button>
@@ -553,13 +557,13 @@ const Support = () => {
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
                     placeholder="Additional feedback (optional)"
-                    className="w-full p-2 border rounded-lg mb-2"
+                    className={`w-full p-2 rounded-lg mb-2 ${isNeuralTheme ? 'neural-input' : 'border'}`}
                     rows={3}
                   />
                   <button
                     onClick={submitRating}
                     disabled={rating === 0}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                    className={isNeuralTheme ? "neural-button disabled:opacity-50" : "px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"}
                   >
                     Submit Rating
                   </button>
@@ -575,43 +579,43 @@ const Support = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 mx-auto ${isNeuralTheme ? 'border-neural-electric-blue' : 'border-blue-600'}`}></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
+        <h1 className={`text-2xl font-bold ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Support Tickets</h1>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className={isNeuralTheme ? "neural-button flex items-center" : "flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"}
         >
-          <Plus size={20} className="mr-2" />
+          <Plus size={20} className={`mr-2 ${isNeuralTheme ? 'neural-icon' : ''}`} />
           New Ticket
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow">
+      <div className={isNeuralTheme ? "neural-card flex items-center space-x-4 p-4" : "flex items-center space-x-4 bg-white p-4 rounded-lg shadow"}>
         <div className="flex-1">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
             <input
               type="text"
               placeholder="Search tickets..."
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg"
+              className={`w-full pl-10 pr-4 py-2 rounded-lg ${isNeuralTheme ? 'neural-input' : 'border'}`}
             />
           </div>
         </div>
         <select
           value={filters.status}
           onChange={(e) => setFilters({...filters, status: e.target.value})}
-          className="px-3 py-2 border rounded-lg"
+          className={isNeuralTheme ? "neural-input" : "px-3 py-2 border rounded-lg"}
         >
           <option value="">All Status</option>
           <option value="Open">Open</option>
@@ -622,7 +626,7 @@ const Support = () => {
         <select
           value={filters.priority}
           onChange={(e) => setFilters({...filters, priority: e.target.value})}
-          className="px-3 py-2 border rounded-lg"
+          className={isNeuralTheme ? "neural-input" : "px-3 py-2 border rounded-lg"}
         >
           <option value="">All Priority</option>
           <option value="Low">Low</option>
@@ -633,42 +637,42 @@ const Support = () => {
       </div>
 
       {/* Tickets List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className={isNeuralTheme ? "neural-card overflow-hidden" : "bg-white rounded-lg shadow overflow-hidden"}>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className={isNeuralTheme ? "bg-neural-card-background" : "bg-gray-50"}>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Ticket
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Priority
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Created
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={`${isNeuralTheme ? 'bg-neural-card-background divide-neural-border-color' : 'bg-white divide-y divide-gray-200'}`}>
               {Array.isArray(tickets) && tickets.length > 0 ? tickets.map((ticket) => (
-                <tr key={ticket._id} className="hover:bg-gray-50">
+                <tr key={ticket._id} className={isNeuralTheme ? "hover:bg-neural-background-light" : "hover:bg-gray-50"}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className={`text-sm font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>
                       #{ticket.ticketNumber}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{ticket.subject}</div>
-                    <div className="text-sm text-gray-500 truncate max-w-xs">
+                    <div className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-900'}`}>{ticket.subject}</div>
+                    <div className={`text-sm truncate max-w-xs ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                       {ticket.description}
                     </div>
                   </td>
@@ -682,17 +686,17 @@ const Support = () => {
                       {ticket.priority}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>
                     {new Date(ticket.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => fetchTicketDetails(ticket._id)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className={isNeuralTheme ? "text-neural-aqua-gradient-start hover:text-neural-electric-blue" : "text-blue-600 hover:text-blue-900"}
                         title="View Details"
                       >
-                        <Eye size={16} />
+                        <Eye size={16} className={isNeuralTheme ? 'neural-icon' : ''} />
                       </button>
                       {((user?.role === 'admin' || user?.role === 'super_admin') || ticket.createdBy._id === user._id) && (
                         <>
@@ -707,17 +711,17 @@ const Support = () => {
                               });
                               setShowEditModal(true);
                             }}
-                            className="text-green-600 hover:text-green-900"
+                            className={isNeuralTheme ? "text-neural-aqua-gradient-start hover:text-neural-electric-blue" : "text-green-600 hover:text-green-900"}
                             title="Edit Ticket"
                           >
-                            <Edit size={16} />
+                            <Edit size={16} className={isNeuralTheme ? 'neural-icon' : ''} />
                           </button>
                           <button
                             onClick={() => handleDeleteTicket(ticket._id)}
-                            className="text-red-600 hover:text-red-900"
+                            className={isNeuralTheme ? "text-neural-neon-purple hover:text-red-500" : "text-red-600 hover:text-red-900"}
                             title="Delete Ticket"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={16} className={isNeuralTheme ? 'neural-icon' : ''} />
                           </button>
                         </>
                       )}
@@ -729,10 +733,10 @@ const Support = () => {
           </table>
         </div>
         {Array.isArray(tickets) && tickets.length === 0 && (
-          <div className="text-center py-12">
-            <MessageSquare className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No tickets</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new support ticket.</p>
+          <div className={`text-center py-12 ${isNeuralTheme ? 'text-neural-text-color' : ''}`}>
+            <LifeBuoy className={`mx-auto h-12 w-12 ${isNeuralTheme ? 'neural-icon' : 'text-gray-400'}`} />
+            <h3 className={`mt-2 text-sm font-medium ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>No tickets</h3>
+            <p className={`mt-1 text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>Get started by creating a new support ticket.</p>
           </div>
         )}
       </div>

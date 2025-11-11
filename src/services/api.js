@@ -129,12 +129,12 @@ export const settingsAPI = {
   updateNotifications: (data) =>
     authenticatedFetch('/api/v1/settings', {
       method: 'PUT',
-      body: JSON.stringify({ settings: { notifications: data } }),
+      body: JSON.stringify({ settings: { notifications: data } }), // This is correct as per backend controller's merge logic
     }),
   updateSecurity: (data) =>
     authenticatedFetch('/api/v1/settings', {
       method: 'PUT',
-      body: JSON.stringify({ settings: { security: data } }),
+      body: JSON.stringify({ settings: { security: data } }), // This is correct as per backend controller's merge logic
     }),
   changePassword: (data) =>
     authenticatedFetch('/api/v1/settings/password', {
@@ -233,6 +233,7 @@ export const messagesAPI = {
     authenticatedFetch(`/api/v1/messages?${new URLSearchParams(params).toString()}`),
   export: (params) =>
     authenticatedFetch(`/api/v1/messages/export?${new URLSearchParams(params).toString()}`),
+  getMessageStats: () => authenticatedFetch('/api/v1/messages/stats'),
 };
 
 // ✅ Support API

@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
           const lowBalanceNotification = {
             id: 'low-balance',
             title: 'Low Wallet Balance Alert',
-            message: `Your current balance is ₹${user.wallet_balance}. Consider topping up to avoid service interruption.`,
+            message: `Your current balance is ₹${(user.wallet_balance || 0).toFixed(2)}. Consider topping up to avoid service interruption.`,
             timestamp: 'Just now',
             read: false,
             type: 'warning'
@@ -72,7 +72,7 @@ const Layout = ({ children }) => {
             const lowBalanceNotification = {
               id: 'low-balance',
               title: 'Low Wallet Balance Alert',
-              message: `Your current balance is ₹${user.wallet_balance}. Consider topping up to avoid service interruption.`,
+              message: `Your current balance is ₹${(user.wallet_balance || 0).toFixed(2)}. Consider topping up to avoid service interruption.`,
               timestamp: 'Just now',
               read: false,
               type: 'warning'
@@ -181,7 +181,7 @@ const Layout = ({ children }) => {
             <div className="flex items-center space-x-2">
               <Wallet className="h-4 w-4" style={{ color: 'var(--color-success)' }} />
               <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-                ₹{user?.wallet_balance || 0}
+                ₹{(user?.wallet_balance || 0).toFixed(2)}
               </span>
             </div>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"

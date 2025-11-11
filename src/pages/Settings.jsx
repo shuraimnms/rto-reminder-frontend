@@ -73,6 +73,7 @@ const Settings = () => {
     try {
       await settingsAPI.updateNotifications(settings.notifications);
       toast.success('Notification settings updated successfully');
+      fetchSettings(); // Refresh settings after successful update
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to update notification settings';
       toast.error(errorMessage);
@@ -88,6 +89,7 @@ const Settings = () => {
     try {
       await settingsAPI.updateSecurity(settings.security);
       toast.success('Security settings updated successfully');
+      fetchSettings(); // Refresh settings after successful update
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to update security settings';
       toast.error(errorMessage);
@@ -128,7 +130,7 @@ const Settings = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className={isAiTheme ? "text-2xl font-bold text-ai-text-bright" : "text-2xl font-bold text-gray-900"}>Settings</h1>
+        <h1 className={isAiTheme ? "text-2xl font-bold text-ai-text-bright" : "text-2xl font-bold text-gray-900 themed-heading"}>Settings</h1>
         <button
           onClick={fetchSettings}
           className={isAiTheme ? "btn-ai-secondary flex items-center" : "btn btn-secondary flex items-center"}
@@ -143,7 +145,7 @@ const Settings = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <User className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">Profile Settings</h3>
+            <h3 className="text-lg font-medium text-gray-900 themed-heading">Profile Settings</h3>
           </div>
         </div>
 
@@ -235,7 +237,7 @@ const Settings = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Bell className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">Notification Settings</h3>
+            <h3 className="text-lg font-medium text-gray-900 themed-heading">Notification Settings</h3>
           </div>
         </div>
 
@@ -355,7 +357,7 @@ const Settings = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Palette className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">Appearance Settings</h3>
+            <h3 className="text-lg font-medium text-gray-900 themed-heading">Appearance Settings</h3>
           </div>
         </div>
 
@@ -375,14 +377,14 @@ const Settings = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Shield className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">Security Settings</h3>
+            <h3 className="text-lg font-medium text-gray-900 themed-heading">Security Settings</h3>
           </div>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Change Password */}
           <div>
-            <h4 className="text-md font-medium text-gray-900 mb-4 flex items-center">
+            <h4 className="text-md font-medium text-gray-900 mb-4 flex items-center themed-heading">
               <Key className="h-4 w-4 mr-2" />
               Change Password
             </h4>
@@ -448,7 +450,7 @@ const Settings = () => {
           <div className="border-t border-gray-200 pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-md font-medium text-gray-900">Two-Factor Authentication</h4>
+                <h4 className="text-md font-medium text-gray-900 themed-heading">Two-Factor Authentication</h4>
                 <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
               </div>
               <button
@@ -470,7 +472,7 @@ const Settings = () => {
           {/* Session Timeout */}
           <div className="border-t border-gray-200 pt-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 themed-heading">
                 Session Timeout (hours)
               </label>
               <select

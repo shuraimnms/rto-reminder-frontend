@@ -51,26 +51,26 @@ const themes = {
       secondary: 'linear-gradient(135deg, #64748B 0%, #475569 100%)'
     }
   },
-  ai: {
-    name: 'Neural Intelligence',
-    primary: 'cyan',
+  neural: {
+    name: 'Neural Theme',
+    primary: 'electric-blue',
     colors: {
-      primary: '#00D9FF',
-      primaryHover: '#00B8E6',
-      secondary: '#8B5CF6',
-      accent: '#EC4899',
-      background: 'linear-gradient(135deg, #0A0E27, #131620)',
-      surface: 'rgba(19, 22, 32, 0.8)',
-      text: '#E5E7EB',
-      textSecondary: '#9CA3AF',
-      border: 'rgba(0, 217, 255, 0.2)',
-      error: '#EC4899',
+      primary: 'var(--neural-electric-blue)',
+      primaryHover: 'var(--neural-neon-purple)',
+      secondary: 'var(--neural-neon-purple)',
+      accent: 'var(--neural-aqua-gradient-start)',
+      background: 'var(--neural-background-dark)',
+      surface: 'var(--neural-card-background)',
+      text: 'var(--neural-text-color)',
+      textSecondary: 'rgba(224, 224, 255, 0.7)',
+      border: 'var(--neural-border-color)',
+      error: '#EF4444',
       success: '#10B981',
       warning: '#F59E0B'
     },
     gradients: {
-      primary: 'linear-gradient(135deg, #00D9FF 0%, #0077FF 100%)',
-      secondary: 'linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%)'
+      primary: 'linear-gradient(45deg, var(--neural-electric-blue), var(--neural-neon-purple))',
+      secondary: 'linear-gradient(45deg, var(--neural-aqua-gradient-start), var(--neural-aqua-gradient-end))'
     }
   }
 };
@@ -80,7 +80,7 @@ export function ThemeProvider({ children }) {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'ocean';
+    const savedTheme = localStorage.getItem('theme') || 'default'; // Changed default to 'default'
     setCurrentTheme(savedTheme);
   }, []);
 
@@ -109,7 +109,7 @@ export function ThemeProvider({ children }) {
   return (
     <ThemeContext.Provider value={value}>
       <div
-        className={`min-h-screen transition-all duration-300 ease-in-out theme-${currentTheme} ${isAnimating ? 'opacity-80 scale-95' : 'opacity-100 scale-100'}`}
+        className={`min-h-screen transition-all duration-300 ease-in-out theme-${currentTheme} ${currentTheme === 'neural' ? 'neural-theme' : ''} ${isAnimating ? 'opacity-80 scale-95' : 'opacity-100 scale-100'}`}
         style={{
           '--color-primary': theme.colors.primary,
           '--color-primary-hover': theme.colors.primaryHover,
@@ -125,7 +125,7 @@ export function ThemeProvider({ children }) {
           '--color-warning': theme.colors.warning,
           '--gradient-primary': theme.gradients.primary,
           '--gradient-secondary': theme.gradients.secondary,
-          backgroundColor: 'var(--color-background)',
+          backgroundColor: currentTheme === 'neural' ? 'transparent' : 'var(--color-background)', // Use transparent for neural theme to allow its own background
           color: 'var(--color-text)'
         }}
       >
