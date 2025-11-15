@@ -6,8 +6,8 @@ import { useWallet } from '../contexts/WalletContext';
 const PayButton = ({ onBalanceUpdate }) => {
   const [amount, setAmount] = useState('');
   const [isPaying, setIsPaying] = useState(false);
-  const [paymentEnabled, setPaymentEnabled] = useState(false);
   const [quickAmounts, setQuickAmounts] = useState([100, 500, 1000, 2000, 5000]);
+  const [minAmount, setMinAmount] = useState(100);
   const { refreshBalance } = useWallet();
 
   useEffect(() => {
@@ -18,9 +18,11 @@ const PayButton = ({ onBalanceUpdate }) => {
     try {
       const response = await payAPI.getBalance();
       const data = response.data;
-      setPaymentEnabled(data?.paymentEnabled || false);
       if (data?.settings?.topup_amounts) {
         setQuickAmounts(data.settings.topup_amounts);
+      }
+      if (data?.settings?.min_topup_amount) {
+        setMinAmount(data.settings.min_topup_amount);
       }
     } catch (error) {
       console.error('Failed to fetch payment settings:', error);
@@ -55,60 +57,47 @@ const PayButton = ({ onBalanceUpdate }) => {
   const handleTopup = async (e) => {
     e.preventDefault();
     const topupAmount = parseFloat(amount);
-    if (isNaN(topupAmount) || topupAmount < 1) {
-      toast.error('Please enter a valid amount (minimum ₹1.00).');
+    if (isNaN(topupAmount) || topupAmount < minAmount) {
+      toast.error(`Please enter a valid amount (minimum ₹${minAmount}).`);
       return;
     }
 
     setIsPaying(true);
 
     try {
-      if (paymentEnabled) {
-        // Payment integration enabled:https://rtoagent.netlify.app/ use Cashfree
-        const response = await payAPI.initiateTopup({ amount: topupAmount });
-        if (response.data && response.data.paymentSessionId) {
-          const cashfree = await loadCashfreeSDK();
+      // Use Cashfree for all payments
+      const response = await payAPI.initiateTopup({ amount: topupAmount });
+      if (response.data && response.data.paymentSessionId) {
+        const cashfree = await loadCashfreeSDK();
 
-          const checkoutOptions = {
-            paymentSessionId: response.data.paymentSessionId,
-            redirectTarget: '_self', // or '_blank', depending on flow
-            returnUrl: `https://rtoagent.netlify.app/payment-status-check?order_id=${response.data.orderId}`,
-            // you can add more options if required
-          };
+        const checkoutOptions = {
+          paymentSessionId: response.data.paymentSessionId,
+          redirectTarget: '_self', // or '_blank', depending on flow
+          returnUrl: `https://rtoagent.netlify.app/payment-status-check?order_id=${response.data.orderId}`,
+          // you can add more options if required
+        };
 
-          cashfree
-            .checkout(checkoutOptions)
-            .then((result) => {
-              if (result.error) {
-                console.error('Payment failed:', result.error);
-                toast.error('Payment failed. Please try again.');
-                // Redirection is now handled by PaymentStatusCheck.jsx
-              } else if (result.redirect) {
-                console.log('Redirecting to checkout...');
-                // Flow continues via redirect
-              } else {
-                // Possibly immediate result (non-redirect payment mode)
-                console.log('Payment result:', result);
-              }
-            })
-            .catch((err) => {
-              console.error('Checkout error:', err);
-              toast.error('Payment initiation failed. Please try again.');
-            });
-        } else {
-          throw new Error('Failed to initiate payment session.');
-        }
+        cashfree
+          .checkout(checkoutOptions)
+          .then((result) => {
+            if (result.error) {
+              console.error('Payment failed:', result.error);
+              toast.error('Payment failed. Please try again.');
+              // Redirection is now handled by PaymentStatusCheck.jsx
+            } else if (result.redirect) {
+              console.log('Redirecting to checkout...');
+              // Flow continues via redirect
+            } else {
+              // Possibly immediate result (non-redirect payment mode)
+              console.log('Payment result:', result);
+            }
+          })
+          .catch((err) => {
+            console.error('Checkout error:', err);
+            toast.error('Payment initiation failed. Please try again.');
+          });
       } else {
-        // Direct wallet top-up (no payment gateway)
-        const response = await payAPI.addBalance({ amount: topupAmount });
-        if (response.success) {
-          toast.success(response.message || `₹${topupAmount} added successfully!`);
-          setAmount('');
-          if (onBalanceUpdate) onBalanceUpdate();
-          refreshBalance();
-        } else {
-          throw new Error(response.message || 'Failed to add balance');
-        }
+        throw new Error('Failed to initiate payment session.');
       }
     } catch (error) {
       console.error('Failed to add balance:', error);
@@ -146,7 +135,7 @@ const PayButton = ({ onBalanceUpdate }) => {
       <form onSubmit={handleTopup} className="space-y-4">
         <div>
           <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-            Amount (INR)
+            Amount (INR) - Minimum ₹{minAmount}
           </label>
           <input
             type="number"
@@ -166,12 +155,10 @@ const PayButton = ({ onBalanceUpdate }) => {
           disabled={isPaying}
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-indigo-300"
         >
-          {isPaying ? 'Processing...' : paymentEnabled ? 'Top Up Now' : 'Add Credits'}
+          {isPaying ? 'Processing...' : 'Top Up Now'}
         </button>
         <p className="text-xs text-gray-500 text-center">
-          {paymentEnabled
-            ? 'You will be redirected to the payment gateway.'
-            : 'Minimum top-up amount: ₹1.00'}
+          You will be redirected to the payment gateway.
         </p>
       </form>
     </div>

@@ -1,7 +1,7 @@
 /* Neural Theme - Base Styles */
 
 :root {
-  --neural-electric-blue: #00aaff;
+  --neural-electric-blue: #000000;
   --neural-neon-purple: #aa00ff;
   --neural-aqua-gradient-start: #00ffff;
   --neural-aqua-gradient-end: #00aaff;
@@ -12,7 +12,6 @@
   --neural-border-color: rgba(0, 170, 255, 0.3);
   --neural-card-background: rgba(26, 26, 42, 0.7);
   --neural-card-shadow: 0 0 15px rgba(0, 170, 255, 0.2), 0 0 30px rgba(170, 0, 255, 0.1);
-  --neural-glow-effect: 0 0 8px var(--neural-electric-blue), 0 0 16px var(--neural-neon-purple);
   --neural-hover-glow: 0 0 10px var(--neural-electric-blue), 0 0 20px var(--neural-neon-purple);
 }
 
@@ -121,7 +120,6 @@
 /* Icons */
 .neural-icon {
   color: var(--neural-electric-blue);
-  text-shadow: var(--neural-glow-effect);
   transition: all 0.3s ease-in-out;
 }
 

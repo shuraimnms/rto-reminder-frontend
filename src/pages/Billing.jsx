@@ -93,6 +93,7 @@ const Billing = () => {
             </h3>
             <button
               onClick={fetchTransactionHistory}
+              disabled={loading}
               className={isNeuralTheme ? "neural-button text-sm" : "text-blue-600 hover:text-blue-800 text-sm font-medium"}
             >
               Refresh
@@ -126,14 +127,37 @@ const Billing = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`font-semibold ${
-                      transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                    {(() => {
+                      const isCreditOrTopUp = transaction.type === 'credit' || transaction.description.includes('Wallet Top-up');
+                      const displayAmount = isCreditOrTopUp ? Math.abs(transaction.amount) : transaction.amount;
+                      const amountPrefix = isCreditOrTopUp ? '+' : '-';
+                      const amountColorClass = isCreditOrTopUp ? 'text-green-600' : 'text-red-600';
+
+                      return (
+                        <p className={`font-semibold ${amountColorClass}`}>
+                          {amountPrefix}{formatCurrency(displayAmount)}
+                        </p>
+                      );
+                    })()}
+                    <p className={`text-xs capitalize font-medium ${
+                      transaction.status === 'failed'
+                        ? 'text-red-600' // Red for failed
+                        : (isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500') // Original styling for others
                     }`}>
-                      {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                      {transaction.status === 'failed' ? 'Failed' : transaction.status}
                     </p>
-                    <p className={`text-xs capitalize ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-500'}`}>{transaction.status}</p>
-                    {/* Download Invoice Button (Placeholder) */}
-                    <button className={`mt-1 text-xs ${isNeuralTheme ? 'text-neural-aqua-gradient-start hover:text-neural-electric-blue' : 'text-blue-500 hover:text-blue-700'}`}>
+                    {/* Download Invoice Button */}
+                    <button
+                      onClick={() => {
+                        if (transaction.invoiceUrl) {
+                          window.open(transaction.invoiceUrl, '_blank');
+                        } else {
+                          toast.error('Invoice URL not available.');
+                        }
+                      }}
+                      disabled={loading}
+                      className={`mt-1 text-xs ${isNeuralTheme ? 'text-neural-aqua-gradient-start hover:text-neural-electric-blue' : 'text-blue-500 hover:text-blue-700'} ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
                       <Download className="inline-block h-3 w-3 mr-1" /> Invoice
                     </button>
                   </div>

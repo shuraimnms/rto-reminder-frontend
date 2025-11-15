@@ -63,23 +63,23 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: 'support@rtoremindersystem.com',
+      details: 'shuraim.ai.tech@gmail.com',
       description: 'Send us an email anytime',
       action: 'Send Email',
-      link: 'mailto:support@rtoremindersystem.com'
+      link: 'mailto:shuraim.ai.tech@gmail.com'
     },
     {
       icon: Phone,
       title: 'Call Us',
-      details: '+91-XXXXXXXXXX',
+      details: '+91-9603315845',
       description: 'Mon-Fri, 10AM-5PM IST',
       action: 'Call Now',
-      link: 'tel:+91-XXXXXXXXXX'
+      link: 'tel:+91-9603315845'
     },
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: 'Mumbai, Maharashtra',
+      details: 'Ananthapur, Andhra pradesh',
       description: 'Our headquarters location',
       action: 'Get Directions',
       link: '#'
@@ -354,7 +354,7 @@ const Contact = () => {
                 <div className="text-center">
                   <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500">Interactive Map</p>
-                  <p className="text-sm text-gray-400">Mumbai, Maharashtra</p>
+                  <p className="text-sm text-gray-400">Ananthapur, Andhra pradesh</p>
                 </div>
               </div>
 

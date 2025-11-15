@@ -112,7 +112,10 @@ const MessageLogs = () => {
   const fetchMessageStats = async () => {
     try {
       setStatsLoading(true);
-      const response = await messagesAPI.getMessageStats();
+      const params = {};
+      if (filters.date_from) params.date_from = filters.date_from;
+      if (filters.date_to) params.date_to = filters.date_to;
+      const response = await messagesAPI.getMessageStats(params);
       setStats(response.data);
     } catch (error) {
       console.error('Failed to fetch stats:', error);

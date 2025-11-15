@@ -44,23 +44,24 @@ const About = () => {
     }
   ];
 
+  // UPDATED TEAM SECTION — ALL ROLES ASSIGNED TO SHURAIM
   const team = [
     {
-      name: 'Rajesh Kumar',
+      name: 'Shuraim',
       role: 'CEO & Founder',
-      bio: 'Former RTO agent with 15+ years experience in vehicle registration industry.',
+      bio: 'Founder of the RTO Reminder System, passionate about AI, technology, and building smart applications.',
       image: '/api/placeholder/150/150'
     },
     {
-      name: 'Priya Sharma',
+      name: 'Shuraim',
       role: 'CTO',
-      bio: 'Tech entrepreneur with expertise in SaaS platforms and notification systems.',
+      bio: 'Oversees the technical development of the platform, including automation, AI integration, and modern app design.',
       image: '/api/placeholder/150/150'
     },
     {
-      name: 'Amit Patel',
+      name: 'Shuraim',
       role: 'Head of Customer Success',
-      bio: 'Dedicated to ensuring every RTO agent achieves maximum value from our platform.',
+      bio: 'Ensures users get maximum value from the platform and focuses on helping agents work smarter.',
       image: '/api/placeholder/150/150'
     }
   ];
@@ -164,7 +165,7 @@ const About = () => {
                 Our Story
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                Founded in 2020, RTO Reminder System was born from the frustration of manual RTO processes and missed renewal deadlines. Our founder, with over 15 years in the RTO industry, experienced firsthand the challenges of managing vehicle registrations manually.
+                Founded in 2020, RTO Reminder System was born from the frustration of manual RTO processes and missed renewal deadlines. Our founder, Shuraim, envisioned a smarter way to manage vehicle registrations using cutting-edge technology.
               </p>
               <p className="text-lg text-gray-600 mb-6">
                 What started as a simple solution to send timely reminders has evolved into a comprehensive platform that serves over 500 RTO agents across India, helping them automate their operations and focus on growing their business.
@@ -173,7 +174,7 @@ const About = () => {
                 Today, we're proud to be the trusted partner for RTO agents who want to modernize their operations with cutting-edge technology while maintaining the personal touch their customers value.
               </p>
             </div>
-            <div className="card p-8">
+            <div className="bg-white rounded-xl shadow-sm p-8">
               <div className="text-center">
                 <div className="bg-green-100 rounded-full p-4 w-fit mx-auto mb-4">
                   <Award className="h-12 w-12 text-green-600" />
@@ -261,12 +262,8 @@ const About = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-lg text-gray-600">
-              The passionate people behind RTO Reminder System
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <p className="text-lg text-gray-600">The passionate people behind RTO Reminder System</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -275,15 +272,9 @@ const About = () => {
                 <div className="bg-gray-200 rounded-lg w-32 h-32 mx-auto mb-4 flex items-center justify-center">
                   <Users className="h-16 w-16 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">
-                  {member.name}
-                </h3>
-                <p className="text-blue-600 font-medium mb-3">
-                  {member.role}
-                </p>
-                <p className="text-gray-600 text-sm">
-                  {member.bio}
-                </p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-1">{member.name}</h3>
+                <p className="text-blue-600 font-medium mb-3">{member.role}</p>
+                <p className="text-gray-600 text-sm">{member.bio}</p>
               </div>
             ))}
           </div>
@@ -340,7 +331,6 @@ const About = () => {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/features" className="hover:text-white transition-colors">Features</Link></li>
                 <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-
               </ul>
             </div>
             <div>

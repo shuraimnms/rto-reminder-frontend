@@ -16,6 +16,7 @@ import {
   WifiOff
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const StatCard = ({ title, value, icon: Icon, color, subtitle, isAiTheme, isNeuralTheme, isWalletBox }) => (
   <div className={`
@@ -215,6 +216,94 @@ const Dashboard = () => {
           isAiTheme={isAiTheme}
           isNeuralTheme={isNeuralTheme}
         />
+      </div>
+
+      {/* Recharts Graphs Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Reminders by Type Bar Chart */}
+        <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai p-6" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
+          <h3 className={`text-lg font-semibold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Reminders by Type</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={displayStats.charts?.reminders_by_type || []}>
+              <CartesianGrid strokeDasharray="3 3" stroke={isNeuralTheme ? '#ffffff20' : isAiTheme ? '#e0e7ff20' : '#e5e7eb'} />
+              <XAxis dataKey="name" stroke={isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'} />
+              <YAxis stroke={isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: isNeuralTheme ? '#1a1a2e' : isAiTheme ? '#0f0f23' : '#ffffff',
+                  border: `1px solid ${isNeuralTheme ? '#00ffff' : isAiTheme ? '#00d4ff' : '#e5e7eb'}`,
+                  borderRadius: '8px',
+                  color: isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'
+                }}
+              />
+              <Bar dataKey="count" fill={isNeuralTheme ? '#00ffff' : isAiTheme ? '#00d4ff' : '#3b82f6'} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Customer Growth Line Chart */}
+        <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai p-6" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
+          <h3 className={`text-lg font-semibold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>Customer Growth Over Time</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={displayStats.charts?.customer_growth || []}>
+              <CartesianGrid strokeDasharray="3 3" stroke={isNeuralTheme ? '#ffffff20' : isAiTheme ? '#e0e7ff20' : '#e5e7eb'} />
+              <XAxis dataKey="month" stroke={isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'} />
+              <YAxis stroke={isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: isNeuralTheme ? '#1a1a2e' : isAiTheme ? '#0f0f23' : '#ffffff',
+                  border: `1px solid ${isNeuralTheme ? '#00ffff' : isAiTheme ? '#00d4ff' : '#e5e7eb'}`,
+                  borderRadius: '8px',
+                  color: isNeuralTheme ? '#ffffff' : isAiTheme ? '#e0e7ff' : '#374151'
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="customers"
+                stroke={isNeuralTheme ? '#00ffff' : isAiTheme ? '#00d4ff' : '#10b981'}
+                strokeWidth={2}
+                dot={{ fill: isNeuralTheme ? '#00ffff' : isAiTheme ? '#00d4ff' : '#10b981', strokeWidth: 2, r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* AI Features Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* AI Insights Card */}
+        <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai p-6" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
+          <h3 className={`text-lg font-semibold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>AI Insights</h3>
+          <div className="space-y-3">
+            <p className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
+              Based on your data, PUC certificate reminders are the most common. Consider prioritizing them to improve compliance.
+            </p>
+            <p className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
+              Customer growth is steady. AI suggests targeting new regions for expansion.
+            </p>
+            <p className={`text-sm ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
+              Delivery rate is high at 98.5%. Keep up the good work!
+            </p>
+          </div>
+        </div>
+
+        {/* AI Chatbot Integration Placeholder */}
+        <div className={isNeuralTheme ? "neural-card p-6" : isAiTheme ? "card-ai p-6" : "card bg-white rounded-lg shadow-sm border border-gray-200 p-6"}>
+          <h3 className={`text-lg font-semibold mb-4 ${isNeuralTheme ? 'text-neural-electric-blue' : 'text-gray-900'}`}>AI Assistant</h3>
+          <p className={`text-sm mb-4 ${isNeuralTheme ? 'text-neural-text-color' : 'text-gray-600'}`}>
+            Ask me anything about your RTO reminders or get quick insights.
+          </p>
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              placeholder="Type your query..."
+              className={`flex-1 px-3 py-2 border rounded-lg ${isNeuralTheme ? 'bg-neural-card-background border-neural-border-color text-neural-text-color' : 'border-gray-300'}`}
+            />
+            <button className={isNeuralTheme ? "neural-button px-4 py-2" : isAiTheme ? "btn-ai-primary px-4 py-2" : "bg-blue-600 text-white px-4 py-2 rounded-lg"}>
+              Ask AI
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

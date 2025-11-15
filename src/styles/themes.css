@@ -261,17 +261,6 @@
   }
 }
 
-/* Text glow animations */
-@keyframes text-glow-cyan {
-  from { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); }
-  to { text-shadow: 0 0 20px rgba(6, 182, 212, 1), 0 0 30px rgba(6, 182, 212, 0.5); }
-}
-
-@keyframes text-glow-purple {
-  from { text-shadow: 0 0 5px rgba(139, 92, 246, 0.5); }
-  to { text-shadow: 0 0 20px rgba(139, 92, 246, 1), 0 0 30px rgba(139, 92, 246, 0.5); }
-}
-
 @keyframes text-glow-red {
   from { text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
   to { text-shadow: 0 0 20px rgba(239, 68, 68, 1), 0 0 30px rgba(239, 68, 68, 0.5); }

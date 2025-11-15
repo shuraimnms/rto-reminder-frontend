@@ -1,4 +1,4 @@
-const api = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+ const api = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // ✅ Helper function for authenticated fetch
 const authenticatedFetch = async (endpoint, options = {}) => {
@@ -77,7 +77,7 @@ export const customersAPI = {
   importCSV: (formData) =>
     authenticatedFetch('/api/v1/import/csv', { method: 'POST', body: formData }),
 };
-
+ 
 // ✅ Reminders API
 export const remindersAPI = {
   getAll: (params) =>
@@ -233,7 +233,8 @@ export const messagesAPI = {
     authenticatedFetch(`/api/v1/messages?${new URLSearchParams(params).toString()}`),
   export: (params) =>
     authenticatedFetch(`/api/v1/messages/export?${new URLSearchParams(params).toString()}`),
-  getMessageStats: () => authenticatedFetch('/api/v1/messages/stats'),
+  getMessageStats: (params = {}) =>
+    authenticatedFetch(`/api/v1/messages/stats?${new URLSearchParams(params).toString()}`),
 };
 
 // ✅ Support API
