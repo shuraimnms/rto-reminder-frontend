@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../../components/ThemeSelector';
-import NotificationBell from '../../components/NotificationBell'; // Keep for structure, though might not be functional on login
+import NotificationBell from   '../../components/NotificationBell'; // Keep for structure, though might not be functional on login
 import Chatbot from '../../components/Chatbot';
 import AnimatedBackground from '../../components/AnimatedBackground';
 import { format } from 'date-fns';
@@ -24,6 +24,7 @@ import { Mail as MailIcon, Lock, Eye, EyeOff } from 'lucide-react'; // Renamed M
 const Login = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState([]); // Placeholder
+  const [showPassword, setShowPassword] = useState(false);
   const { user, logout, isAdmin, authChecked, login } = useAuth();
   const { currentTheme } = useTheme();
   const isAiTheme = currentTheme === 'ai';
@@ -73,7 +74,7 @@ const Login = () => {
     { name: 'Manage Agents', href: '/admin/agents', icon: UserCog },
     { name: 'All Customers', href: '/admin/customers', icon: Users },
     { name: 'All Messages', href: '/admin/messages', icon: MessageSquare },
-    { name: 'Notifications', href: '/admin/notifications', icon: Mail }, // Using Mail icon from lucide-react
+    { name: 'Notifications', href: '/admin/notifications', icon: MailIcon }, // Using Mail icon from lucide-react
     { name: 'Support', href: '/admin/support', icon: LifeBuoy },
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText },
     { name: 'Fraud Alerts', href: '/admin/fraud-alerts', icon: AlertTriangle },
@@ -118,9 +119,10 @@ const Login = () => {
   return (
     <div className={`flex h-screen theme-transition ${isAiTheme ? 'theme-ai' : ''}`} style={{ backgroundColor: 'var(--color-background)' }}>
       {isAiTheme && <AnimatedBackground />}
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out ${isAiTheme ? 'card-ai' : ''}`}
-        style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+      {/* Sidebar - Only show if user is logged in */}
+      {user && (
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out ${isAiTheme ? 'card-ai' : ''}`}
+          style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
         <div className="flex items-center justify-between h-16 px-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-primary)' }}>
@@ -183,9 +185,10 @@ const Login = () => {
           </div>
         )}
       </div>
+      )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`${user ? 'flex-1' : 'w-full'} flex flex-col overflow-hidden`}>
         {/* Header */}
         <header className={isAiTheme ? "card-ai" : "shadow-sm"} style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">

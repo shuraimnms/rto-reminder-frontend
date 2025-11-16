@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -103,10 +103,15 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <WalletProvider>
-          <Router>
-            <ScrollToTop />
-            <div className="App">
+                <WalletProvider>
+                  <Router
+                    future={{
+                      v7_startTransition: true,
+                      v7_relativeSplatPath: true,
+                    }}
+                  >
+                    <ScrollToTop />
+                    <div className="App">
               <Toaster
                 position="top-right"
                 toastOptions={{
